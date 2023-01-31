@@ -22,7 +22,7 @@
   <script src="https://kit.fontawesome.com/04e2300274.js" crossorigin="anonymous"></script>
   <div class="navbar-brand">
     <a class="navbar-item" href="">
-      <img src="/sponge.png" width="30px" height="30px" alt="Website Logo"/>
+      <img src="/images/sponge.png" width="30px" height="30px" alt="Website Logo"/>
     </a>
 
     <a href="#" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -56,9 +56,7 @@
     </div>
     <div class="navbar-end">
       <!-- {#if $langStore.language} -->
-        <div class="navbar-item">
-          <a href="#">Language: {$langStore.language} {$langStore.flag}</a>
-        </div>
+        <a href="/#/preferences/language-select" class="navbar-item">Language: {$langStore.language} {$langStore.flag}</a>
       <!-- {/if} -->
       <div class="navbar-item has-dropdown is-hoverable">
         {#if $authStore.isLoggedIn}

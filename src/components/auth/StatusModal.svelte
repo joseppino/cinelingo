@@ -3,10 +3,7 @@
   export let message; // details of failure/success
   export let showRegStatus;
 
-  const togglePopup = () => {
-    showRegStatus = !showRegStatus;
-    console.log(showRegStatus);
-  }
+  const togglePopup = () => showRegStatus = !showRegStatus;
 
 </script>
 
@@ -34,19 +31,16 @@
           <span>Registration Failed</span>
         </div>
         
-        <p class="block">
-          Could not complete registration. 
-        </p>
         <code>{message}</code>
         <p class="block">
           Please try again.
         </p>
 
-        <button class="button" on:click={togglePopup}>Close</button>
+        <button class="button " on:click={togglePopup}>Close</button>
       {/if}
     </div>
   </div>
-  <button class="modal-close is-large" aria-label="close"></button>
+  <button class="modal-close is-large" aria-label="close" on:click={togglePopup}></button>
 </div>
 
 <style></style>

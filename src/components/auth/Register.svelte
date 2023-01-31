@@ -15,32 +15,45 @@
 
   function validateForm() {
     if (regForm.password !== regForm.passwordConf) { // check passwords match
-      return [false, "Passwords do not match."];
+      return {
+        valid: false,
+        message: "Passwords do not match."
+      }
     }
     if (regForm.password.length < 6) { // check password is long enough
-      return [false, "Password must be at least 6 characters."];
+      return {
+        valid: false,
+        message: "Password must be at least 6 characters."
+      }
     }
     if (regForm.username.length < 4) { // check username is long enough
-      return [false, "Username must be at least 4 characters."]
+      return {
+        valid: false,
+        message: "Username must be at least 4 characters."
+      }
     }
-    let regex = new RegExp("/^\S+@\S+\.\S+$/"); // define email validity regex
-    if (regex.test(regForm.email)) { // if email does not meet regex critera
-      return [false, "Invalid email address."];
+    let regex = new RegExp(/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i); // define email validity regex
+    if (!regex.test(regForm.email)) { // if email does not meet regex critera
+      return {
+        valid: false,
+        message: "Invalid email address."
+      }
     }
-    return [true, ""]; // if all cases pass, return true for validity
+    return {
+      valid: true,
+      message: ""
+    }
   }
 
   let registrationStatus = "";
   let message = "";
-  $: showRegStatus = false;
+  let showRegStatus = false;
 
   const returnToLogin = () => push("/login");
 
   function handleRegistration() {
     const validation = validateForm();
-    const isFormValid = validation[0];
-    const vMessage = validation[1];
-    if (isFormValid) {
+    if (validation.valid) {
       createUserWithEmailAndPassword(auth, regForm.email, regForm.password)
       .then((userCredential) => {
         // Signed in 
@@ -61,9 +74,9 @@
       });
     }
     else {
-      console.log("Failed:", vMessage);
+      console.log("Failed:", validation.message);
       registrationStatus = "failed";
-      message = vMessage;
+      message = validation.message;
     }
     showRegStatus = true;
   }
@@ -104,7 +117,7 @@
     </div>
 
     <div class="field">
-      <label class="label">Password (>5 characters)</label>
+      <label class="label">Password</label>
       <div class="control has-icons-left">
         <input id="password_input" class="input is-rounded" type="password" placeholder="**********" bind:value={regForm.password} required/>
         <span class="icon is-small is-left">
@@ -128,7 +141,7 @@
   </div>
 
   {#if showRegStatus}
-    <StatusModal registrationStatus message showRegStatus/>
+    <StatusModal bind:registrationStatus={registrationStatus} bind:message={message} bind:showRegStatus={showRegStatus}/>
   {/if}
 </div>
 

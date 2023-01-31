@@ -5,6 +5,7 @@
   import Login from "./components/auth/Login.svelte";
   import Register from "./components/auth/Register.svelte";
   import Logout from "./components/auth/Logout.svelte";
+  import LanguageSelect from "./components/account/LanguageSelect.svelte";
 
   import { authStore } from "./stores/authStore";
   import firebaseConfig from "./credentials/firebaseConfig";
@@ -40,7 +41,8 @@
   "/": Home,
   "/login": Login,
   "/register": Register,
-  "/logout": Logout
+  "/logout": Logout,
+  "/preferences/language-select": LanguageSelect
 }} />
 
 <style></style>

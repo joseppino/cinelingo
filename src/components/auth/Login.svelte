@@ -18,12 +18,19 @@
         const user = userCredential.user;
         console.log(user);
         console.log("Logged in!");
+        validateLogin();
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        console.log(errorCode);
         console.log(errorMessage);
+        emailInput.classList.add("is-danger");
+        emailInput.classList.remove("is-success");
+        passwordInput.classList.add("is-danger");
+        passwordInput.classList.remove("is-success");
       });
+    loginForm.password = "";
   }
 
   async function loginWithGoogle() {
@@ -47,8 +54,31 @@
     return false;
   }
 
-  function registerRedirect() {
-    push("/register");
+  const registerRedirect = () => push("/register");
+
+  let emailInput;
+  const checkEmail = () => {
+    let regex = new RegExp(/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i); // define email validity regex
+    if (regex.test(loginForm.email)) { // if email meets regex critera
+      emailInput.classList.add("is-success");
+      emailInput.classList.remove("is-danger");
+    }
+    else {
+      emailInput.classList.add("is-danger");
+      emailInput.classList.remove("is-success");
+    }
+  }
+
+  let passwordInput;
+  const checkPassword = () => {
+    if (loginForm.password.length > 5) { // if email does not meet regex critera
+      passwordInput.classList.add("is-success");
+      passwordInput.classList.remove("is-danger");
+    }
+    else {
+      passwordInput.classList.add("is-danger");
+      passwordInput.classList.remove("is-success");
+    }
   }
 
   const sub = authStore.subscribe(async (info) => {
@@ -68,15 +98,21 @@
   <div class="box px-6">
     <div class="field">
       <label class="label">Email</label>
-      <div class="control">
-        <input class="input is-rounded" type="email" placeholder="john@example.com" bind:value={loginForm.email} />
+      <div class="control has-icons-left">
+        <input class="input is-rounded" type="email" placeholder="john@example.com" bind:this={emailInput} on:change={checkEmail} bind:value={loginForm.email} />
+        <span class="icon is-small is-left">
+          <i class="fas fa-envelope"></i>
+        </span>
       </div>
     </div>
 
     <div class="field">
       <label class="label">Password</label>
-      <div class="control">
-        <input class="input is-rounded" type="password" placeholder="**********" bind:value={loginForm.password} />
+      <div class="control has-icons-left">
+        <input class="input is-rounded" type="password" placeholder="**********" bind:this={passwordInput} on:change={checkPassword} bind:value={loginForm.password} />
+        <span class="icon is-small is-left">
+          <i class="fas fa-lock"></i>
+        </span>
       </div>
     </div>
 
@@ -101,4 +137,8 @@
   </div>
 </div>
 
-<style></style>
+<style>
+  .password-tip {
+    color: red;
+  }
+</style>
