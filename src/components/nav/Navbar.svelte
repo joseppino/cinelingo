@@ -2,26 +2,46 @@
   import { authStore } from "../../stores/authStore";
   import { langStore } from "../../stores/langStore";
   import { logOut } from "../../scripts/auth/logOut";
+  import { onMount } from "svelte";
+  import getUserRef from "../../scripts/auth/getUserRef";
+  import { doc, getDoc } from "firebase/firestore";
+  import { db } from "../../scripts/fb/firestore";
 
-  // $: loggedIn = false;
-  // $: lang = "";
+  let renderFlag = false; // flag tells navbar whether to render section
 
-  // authStore.subscribe((data) => {
-  //   if(data.isLoggedIn) {
-  //     loggedIn = true;
-  //   }
-  // });
+  async function updateLanguageStore() {
+    try {
+      const userRef = await getUserRef($authStore.email);
+      const userDocSnap = await getDoc(userRef);
+      if (userDocSnap.exists()) {
+        const languagePref = userDocSnap.data().languagePreference;
+        const langDocRef = doc(db, "languages", languagePref);
+        const langDocSnap = await getDoc(langDocRef);
+        if(langDocSnap.exists()) {
+          langStore.set({
+            language: langDocSnap.id,
+            flag: langDocSnap.data().flag
+          });
+          renderFlag = true;
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
-  // langStore.subscribe((data) => {
-
-  // })
+  authStore.subscribe(() => {
+    if ($authStore.isLoggedIn) {
+      updateLanguageStore();
+    }
+  });
 
 </script>
 
 <nav class="navbar is-fixed-top" aria-label="main navigation">
   <script src="https://kit.fontawesome.com/04e2300274.js" crossorigin="anonymous"></script>
   <div class="navbar-brand">
-    <a class="navbar-item" href="">
+    <a class="navbar-item" href="/">
       <img src="/images/sponge.png" width="30px" height="30px" alt="Website Logo"/>
     </a>
 
@@ -55,19 +75,21 @@
     </div>
     </div>
     <div class="navbar-end">
-      <!-- {#if $langStore.language} -->
-        <a href="/#/preferences/language-select" class="navbar-item">Language: {$langStore.language} {$langStore.flag}</a>
-      <!-- {/if} -->
-      <div class="navbar-item has-dropdown is-hoverable">
-        {#if $authStore.isLoggedIn}
-          <a href="#" class="navbar-link has-icons-left">
-            {$authStore.username}
-          </a>
-        {:else}
-          <a href="#" class="navbar-link has-icons-left">
-            Account
-          </a>
+        {#if $langStore.language && renderFlag}
+          <a href="/#/preferences/language-select" class="navbar-item">Language: {$langStore.flag}</a>
+        {:else if $authStore.isLoggedIn && renderFlag}
+        <a href="/#/preferences/language-select" class="navbar-item">Select a language</a>
         {/if}
+        <div class="navbar-item has-dropdown is-hoverable">
+          {#if $authStore.isLoggedIn}
+            <a href="#" class="navbar-link has-icons-left">
+              {$authStore.username}
+            </a>
+          {:else}
+            <a href="#" class="navbar-link has-icons-left">
+              Account
+            </a>
+          {/if}
         <div class="navbar-dropdown">
           <a href="#" class="navbar-item">
             Profile

@@ -8,24 +8,31 @@
   import LanguageSelect from "./components/account/LanguageSelect.svelte";
 
   import { authStore } from "./stores/authStore";
+  import { langStore } from "./stores/langStore";
   import firebaseConfig from "./credentials/firebaseConfig";
  
   import { initializeApp } from 'firebase/app';
+  import { getFirestore } from 'firebase/firestore'
   import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-  const app = initializeApp(firebaseConfig);
+  import { setDB } from "./scripts/fb/firestore";
+
+  const app = initializeApp(firebaseConfig); //initialise Firebase backend
+  setDB(app);
 
   const auth = getAuth();
   onAuthStateChanged(auth, (user) => {
     if (user) {
       authStore.set({
         isLoggedIn: true,
-        username: user.displayName
+        username: user.displayName,
+        email: user.email
       });
     } else {
       authStore.set({
         isLoggedIn: false,
-        username: null
+        username: null,
+        email: null
       });
     }
   });

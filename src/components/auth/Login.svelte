@@ -1,8 +1,10 @@
 <script>
-  import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged} from "firebase/auth";
+  import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup} from "firebase/auth";
+  import { collection, query, where, addDoc, getDocs } from "firebase/firestore";
   import { authStore } from "../../stores/authStore";
   import { onDestroy } from "svelte";
   import { push } from "svelte-spa-router";
+  import { db } from "../../scripts/fb/firestore";
 
   let loginForm = {
     "email": "",
@@ -36,7 +38,22 @@
   async function loginWithGoogle() {
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("email", "==", result.user.email));
+      const querySnapshot = await getDocs(q);
+      if(querySnapshot.empty) { // check that gmail address is not already registered 
+        try {
+          const docRef = await addDoc(collection(db, "users"), {
+            email: result.user.email,
+            username: result.user.displayName,
+            languagePreference: null
+          });
+          console.log("Document written with ID: ", docRef.id);
+        } catch (e) {
+          console.log("Error adding document: ", e);
+        }
+      }
       validateLogin();
     } catch(e) {
       console.log(e);
@@ -47,7 +64,8 @@
     if(auth.currentUser !== null) {
       authStore.set({
         isLoggedIn: true,
-        username: auth.currentUser.displayName
+        username: auth.currentUser.displayName,
+        email: auth.currentUser.email
       });
       return true;
     }

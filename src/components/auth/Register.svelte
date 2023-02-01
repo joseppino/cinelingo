@@ -2,7 +2,10 @@
   import StatusModal from "./StatusModal.svelte";
 
   import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+  import { collection, addDoc } from "firebase/firestore";
   import { push } from "svelte-spa-router";
+  import { db } from "../../scripts/fb/firestore";
+  import validateForm from "../../scripts/auth/validateRegForm";
 
   const auth = getAuth();
 
@@ -13,50 +16,18 @@
     "passwordConf": ""
   };
 
-  function validateForm() {
-    if (regForm.password !== regForm.passwordConf) { // check passwords match
-      return {
-        valid: false,
-        message: "Passwords do not match."
-      }
-    }
-    if (regForm.password.length < 6) { // check password is long enough
-      return {
-        valid: false,
-        message: "Password must be at least 6 characters."
-      }
-    }
-    if (regForm.username.length < 4) { // check username is long enough
-      return {
-        valid: false,
-        message: "Username must be at least 4 characters."
-      }
-    }
-    let regex = new RegExp(/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i); // define email validity regex
-    if (!regex.test(regForm.email)) { // if email does not meet regex critera
-      return {
-        valid: false,
-        message: "Invalid email address."
-      }
-    }
-    return {
-      valid: true,
-      message: ""
-    }
-  }
-
   let registrationStatus = "";
   let message = "";
   let showRegStatus = false;
 
   const returnToLogin = () => push("/login");
 
-  function handleRegistration() {
-    const validation = validateForm();
+  async function handleRegistration() {
+    const validation = validateForm(regForm);
     if (validation.valid) {
-      createUserWithEmailAndPassword(auth, regForm.email, regForm.password)
-      .then((userCredential) => {
-        // Signed in 
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, regForm.email, regForm.password)
+        // Signed in
         const user = userCredential.user;
         // add the user's chosen username
         updateProfile(user, {
@@ -64,14 +35,23 @@
         });
         console.log(user.displayName);
         registrationStatus = "success";
-      })
-      .catch((error) => {
+        try {
+          const docRef = await addDoc(collection(db, "users"), {
+            email: regForm.email,
+            username: regForm.username,
+            languagePreference: null
+          });
+          console.log("Document written with ID: ", docRef.id);
+        } catch (e) {
+          console.log("Error adding document: ", e);
+        }
+      } catch(error) {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
         registrationStatus = "failure";
         message = errorMessage;
-      });
+      }
     }
     else {
       console.log("Failed:", validation.message);
@@ -88,7 +68,7 @@
 
   <div class="box">
     <div class="icon-text">
-      <span class="icon has-text-info is-clickable" on:click={returnToLogin}>
+      <span class="icon has-text-info is-clickable" on:click={returnToLogin} on:keypress={returnToLogin}>
         <i class="fas fa-arrow-left"></i>
       </span>
       <a href="/#/login">Return to Login</a>

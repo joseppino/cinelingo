@@ -2,49 +2,62 @@
   import { authStore } from "../../stores/authStore";
   import { langStore } from "../../stores/langStore";
   import checkAuth from "../../scripts/auth/checkAuth";
+  import { updateDoc } from "firebase/firestore";
+  import getUserRef from "../../scripts/auth/getUserRef";
+  import getLanguages from "../../scripts/getLanguages";
+  import { onMount } from "svelte";
 
   checkAuth();
 
-  const languages = [
-    {
-      id: 1,
-      language: "French",
-      flag: "🇫🇷",
-      imgURI: "https://firebasestorage.googleapis.com/v0/b/spongebath-fyp.appspot.com/o/images%2Fflags%2Ffrance.png?alt=media&token=56d3769d-e011-4449-9e49-e561a26b7ffa"
-    },
-    {
-      id: 2,
-      language: "Spanish",
-      flag: "🇪🇸",
-      imgURI: "https://firebasestorage.googleapis.com/v0/b/spongebath-fyp.appspot.com/o/images%2Fflags%2Fspain.png?alt=media&token=56c73e47-8906-42b8-b372-fddea9069454"
-    },
-    {
-      id: 3,
-      language: "Italian",
-      flag: "🇮🇹",
-      imgURI: "https://firebasestorage.googleapis.com/v0/b/spongebath-fyp.appspot.com/o/images%2Fflags%2Fitaly.png?alt=media&token=1297acdb-e4c5-4aab-b542-bf60239eea8b"
+  const languages = getLangs();
+
+  async function getLangs () {
+    const langs = await getLanguages();
+    return langs;
+  }
+
+  async function updateLanguagePreference(data) {
+    try {
+      // get user's db entry
+      let userRef = await getUserRef($authStore.email);
+      // update firestore DB with new preferred language
+      await updateDoc(userRef, {
+        languagePreference: data.language
+      });
+    } catch (e) {
+      console.log(e);
     }
-  ];
+  }
+  
+  langStore.subscribe((data) => { // on language change...
+    updateLanguagePreference(data);
+    // openPopup
+    // settimeout -> closepopup
+  });
 
 </script>
 
 <div class="container">
   <p class="title has-text-weight-bold">Language Select</p>
   <div class="columns">
-    {#each languages as lang}
-      <div class="column">
-        <div class="card is-clickable" 
-        on:click={() => langStore.set({language: lang.language, flag: lang.flag})} 
-        on:keypress={() => langStore.set({language: lang.language, flag: lang.flag})} >
-          <div class="card-image">
-            <img src={lang.imgURI} alt={lang.language + " flag"}>
-          </div>
-          <div class="card-footer mt-3">
-            <p class="title">{lang.language}</p>
+    {#await languages}
+      <p>Please wait...</p>
+    {:then languages}
+      {#each languages as lang}
+        <div class="column">
+          <div class="card is-clickable" 
+          on:click={() => langStore.set({language: lang[0], flag: lang[1].flag})} 
+          on:keypress={() => langStore.set({language: lang[0], flag: lang[1].flag})} >
+            <div class="card-image">
+              <img src={lang[1].imgURI} alt={lang[1].name + " flag"}>
+            </div>
+            <div class="card-footer pt-1">
+              <p class="title">{lang[1].name}</p>
+            </div>
           </div>
         </div>
-      </div>
-    {/each}
+      {/each}
+    {/await}
   </div>
 </div>
 
