@@ -6,7 +6,8 @@ export const logOut = async () => {
   const auth = getAuth();
   await signOut(auth);
   langStore.set({
-    language: null,
+    languageName: null,
+    locale: null,
     flag: null
   });
   push("/logout");

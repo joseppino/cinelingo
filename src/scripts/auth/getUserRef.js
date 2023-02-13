@@ -12,6 +12,6 @@ export default async function getUserRef(userEmail) {
     });
     return(userRef)
   } catch (e) {
-    return (e);
+    throw (e);
   }
 }

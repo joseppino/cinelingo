@@ -71,7 +71,7 @@
       <span class="icon has-text-info is-clickable" on:click={returnToLogin} on:keypress={returnToLogin}>
         <i class="fas fa-arrow-left"></i>
       </span>
-      <a href="/#/login">Return to Login</a>
+      <a href="/login">Return to Login</a>
     </div>
   </div>
 

@@ -99,9 +99,16 @@
     }
   }
 
+  let showSuccessNotification = false;
+
   const sub = authStore.subscribe(async (info) => {
     if (info.isLoggedIn) {
-      push("/");
+      emailInput.readOnly = true;
+      passwordInput.readOnly = true;
+      showSuccessNotification = true;
+      setTimeout(() => {
+        push("/");
+      }, 1000);
     }
   });
 
@@ -113,6 +120,11 @@
 
 
 <div class="container">
+  {#if showSuccessNotification}
+    <div class="notification is-success">
+      <strong>Login Successful!</strong>
+    </div>
+  {/if}
   <div class="box px-6">
     <div class="field">
       <label class="label">Email</label>
@@ -156,7 +168,4 @@
 </div>
 
 <style>
-  .password-tip {
-    color: red;
-  }
 </style>

@@ -46,8 +46,8 @@
       {#each languages as lang}
         <div class="column">
           <div class="card is-clickable" 
-          on:click={() => langStore.set({language: lang[0], flag: lang[1].flag})} 
-          on:keypress={() => langStore.set({language: lang[0], flag: lang[1].flag})} >
+          on:click={() => langStore.set({languageName: lang[0], locale: lang[1].reference, flag: lang[1].flag})} 
+          on:keypress={() => langStore.set({languageName: lang[0], locale: lang[1].reference, flag: lang[1].flag})} >
             <div class="card-image">
               <img src={lang[1].imgURI} alt={lang[1].name + " flag"}>
             </div>
@@ -62,6 +62,10 @@
 </div>
 
 <style>
+  .card {
+    box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.3),0 0 0 1px rgba(10,10,10,.02);
+  }
+
   .card:hover {
     box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.7),0 0 0 1px rgba(10,10,10,.02);
   }

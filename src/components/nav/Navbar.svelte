@@ -2,39 +2,8 @@
   import { authStore } from "../../stores/authStore";
   import { langStore } from "../../stores/langStore";
   import { logOut } from "../../scripts/auth/logOut";
-  import { onMount } from "svelte";
-  import getUserRef from "../../scripts/auth/getUserRef";
-  import { doc, getDoc } from "firebase/firestore";
-  import { db } from "../../scripts/fb/firestore";
-
-  let renderFlag = false; // flag tells navbar whether to render section
-
-  async function updateLanguageStore() {
-    try {
-      const userRef = await getUserRef($authStore.email);
-      const userDocSnap = await getDoc(userRef);
-      if (userDocSnap.exists()) {
-        const languagePref = userDocSnap.data().languagePreference;
-        const langDocRef = doc(db, "languages", languagePref);
-        const langDocSnap = await getDoc(langDocRef);
-        if(langDocSnap.exists()) {
-          langStore.set({
-            language: langDocSnap.id,
-            flag: langDocSnap.data().flag
-          });
-          renderFlag = true;
-        }
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  authStore.subscribe(() => {
-    if ($authStore.isLoggedIn) {
-      updateLanguageStore();
-    }
-  });
+  import capitaliseFirstLetter from "../../scripts/capitaliseFirstLetter";
+  import { link } from "svelte-spa-router";
 
 </script>
 
@@ -58,27 +27,27 @@
         Home
       </a>
       <div class="navbar-item has-dropdown is-hoverable">
-        <a href="#" class="navbar-link has-icons-left">
+        <a href="/explore" use:link class="navbar-link has-icons-left">
           Explore
         </a>
       <div class="navbar-dropdown">
-        <a href="#" class="navbar-item">
+        <a href="/explore/video/films" use:link class="navbar-item">
           Films
         </a>
-        <a href="#" class="navbar-item">
+        <a href="/explore/video/tv" use:link class="navbar-item">
           Television
         </a>
-        <a href="#" class="navbar-item">
+        <a href="/explore/music" use:link class="navbar-item">
           Music
         </a>
       </div>
     </div>
     </div>
     <div class="navbar-end">
-        {#if $langStore.language && renderFlag}
-          <a href="/#/preferences/language-select" class="navbar-item">Language: {$langStore.flag}</a>
-        {:else if $authStore.isLoggedIn && renderFlag}
-        <a href="/#/preferences/language-select" class="navbar-item">Select a language</a>
+        {#if $langStore.languageName}
+          <a href="/preferences/language-select" class="navbar-item" use:link>Language: {capitaliseFirstLetter($langStore.languageName)} {$langStore.flag}</a>
+        {:else if $authStore.isLoggedIn}
+        <a href="/preferences/language-select" class="navbar-item" use:link>Select a language</a>
         {/if}
         <div class="navbar-item has-dropdown is-hoverable">
           {#if $authStore.isLoggedIn}
@@ -99,11 +68,11 @@
           </a>
           <hr class="navbar-divider">
           {#if $authStore.isLoggedIn}
-            <a href="/#/logout" class="navbar-item" on:click={logOut}>
+            <a href="/logout" class="navbar-item" on:click={logOut} use:link>
               Log Out
             </a>
           {:else}
-            <a href="/#/login" class="navbar-item">
+            <a href="/login" class="navbar-item" use:link>
               Log In
             </a>
           {/if}
