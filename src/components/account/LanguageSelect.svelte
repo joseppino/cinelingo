@@ -22,7 +22,7 @@
       let userRef = await getUserRef($authStore.email);
       // update firestore DB with new preferred language
       await updateDoc(userRef, {
-        languagePreference: data.language
+        languagePreference: data.languageName
       });
     } catch (e) {
       console.log(e);

@@ -4,7 +4,7 @@
   const content = props.content;
   const mediaType = props.mediaType;
 
-
+  
   
 </script>
 
@@ -26,12 +26,9 @@
       {content.overview}
       <div class="genres block is-flex is-flex-direction-column mt-2">
         {#each content.genreNames as genreName}
-          <a>{genreName}</a>
+          <a href="#">{genreName}</a>
         {/each}
       </div>
-      <a href="#">#css</a> <a href="#">#responsive</a>
-      <br>
-      <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
     </div>
   </div>
 </div>

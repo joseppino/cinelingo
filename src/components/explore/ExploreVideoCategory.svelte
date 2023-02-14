@@ -6,7 +6,7 @@
   import ContentCard from "./ContentCard.svelte";
   import tmdbApikey from "../../credentials/tmdbApikey";
   import { push } from "svelte-spa-router";
-  import { logOut } from "../../scripts/auth/logOut";
+  import ExpandedCardModal from "./ExpandedCardModal.svelte";
 
   export let params;
 
@@ -15,6 +15,13 @@
 
   if(mediaType !== "tv" && mediaType !== "films") {
     push("*"); // redirect to not found
+  }
+
+  let apiMediaRef; // declare correct term for api call (movie/tv)
+  if(mediaType === "films") {
+    apiMediaRef = "movie";
+  } else {
+    apiMediaRef = "tv";
   }
 
   let mediaName;
@@ -28,13 +35,6 @@
   }
 
   async function getGenres() {
-    let apiMediaRef; // declare correct term for api call (movie/tv)
-    if(mediaType === "films") {
-      apiMediaRef = "movie";
-    } else {
-      apiMediaRef = "tv";
-    }
-
     const req = `https://api.themoviedb.org/3/genre/${apiMediaRef}/list?api_key=${tmdbApikey}&language=en-US`;
     const res = await fetch(req);
     const obj = await res.json();
@@ -60,8 +60,30 @@
     return media;
   }
 
+  async function handleCardClick(content) {
+    const detailsReq = `https://api.themoviedb.org/3/${apiMediaRef}/${content.id}?api_key=${tmdbApikey}&language=en-US`;
+    const imdbIdReq = `https://api.themoviedb.org/3/${apiMediaRef}/${content.id}/external_ids?api_key=${tmdbApikey}&language=en-US`;
+    
+    const detailsRes = await fetch(detailsReq);
+    const details = await detailsRes.json();
+
+    const imdbIdRes = await (await fetch(imdbIdReq)).json();
+    const imdbId = imdbIdRes.imdb_id;
+    
+    console.log(details);
+    modalDetails = details;
+    modalDetails.mediaType = mediaType; // assign media type
+    if(imdbId) { // check id is not null
+      modalDetails.imdbId = imdbId; // and imdb id property
+    }
+    console.log(modalDetails);
+    showModal = true;
+  }
+
   const mediaList = loadMedia();
 
+  let showModal = false;
+  let modalDetails = {};
 </script>
 
 <div>
@@ -76,13 +98,15 @@
     <div class="wrap">
     <ul>
     {#each mediaList as content}
-      <li>
+      <li on:click={() => handleCardClick(content)} on:keypress={() => showModal = true}>
         <ContentCard props={{
           content: content,
           mediaType: mediaType 
-        }}/>
+        }} />
       </li>
-    
+      {#if showModal}
+        <ExpandedCardModal details={modalDetails} on:close={() => showModal = false}/>
+      {/if}
     {/each}
     </ul>
     </div>
