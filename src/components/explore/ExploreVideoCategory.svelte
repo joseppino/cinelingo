@@ -13,12 +13,15 @@
   const mediaType = params.mediaType;
   const category = params.category;
 
-  if(mediaType !== "tv" && mediaType !== "films") {
-    push("*"); // redirect to not found
+  if (mediaType !== "tv" && mediaType !== "films") {
+    push("/NotFound"); // redirect to not found
+  }
+  if (category !== "top_rated" && category !== "popular" && category !== "recommended") {
+    push("/NotFound"); // redirect to not found
   }
 
   let apiMediaRef; // declare correct term for api call (movie/tv)
-  if(mediaType === "films") {
+  if (mediaType === "films") {
     apiMediaRef = "movie";
   } else {
     apiMediaRef = "tv";
@@ -32,6 +35,21 @@
   } else if (mediaType === "films") {
     mediaName = "Films";
     dbMediaRef = "movies";
+  }
+
+  let categoryTitle;
+  switch (category) {
+    case "popular":
+      categoryTitle = "Popular";
+      break;
+    case "top_rated":
+      categoryTitle = "Top-Rated";
+    break;
+    case "recommended":
+      categoryTitle = "Recommended";
+      break;
+    default:
+      break;
   }
 
   async function getGenres() {
@@ -91,9 +109,9 @@
     <p>Loading content...</p>
   {:then mediaList}
     {#if $langStore.languageName}
-      <h1 class="title">Browsing Popular {capitaliseFirstLetter($langStore.languageName)} {mediaName}</h1>
+      <h1 class="title">Browsing {categoryTitle} {capitaliseFirstLetter($langStore.languageName)} {mediaName}</h1>
     {:else}
-    <h1 class="title">Browsing Popular {mediaName}</h1>
+    <h1 class="title">Browsing {categoryTitle} {mediaName}</h1>
     {/if}
     <div class="wrap">
     <ul>
@@ -117,7 +135,7 @@
 
 <style>
   .wrap {
-    column-count: 4;
+    column-count: 3;
     column-gap: 2rem;
   }
   li {

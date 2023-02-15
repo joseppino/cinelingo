@@ -23,7 +23,7 @@
 
   <div id="navbarMenu" class="navbar-menu">
     <div class="navbar-start">
-      <a href="/" class="navbar-item">
+      <a href="/" class="navbar-item" use:link>
         Home
       </a>
       <div class="navbar-item has-dropdown is-hoverable">

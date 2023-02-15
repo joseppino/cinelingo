@@ -13,6 +13,25 @@
 		}
   }
 
+  const getRuntimeInHours = (runtime) => {
+    const hours = Math.floor(runtime / 60);
+    const mins = runtime % 60;
+    let hrString;
+    hours > 1 ? hrString = "hours" : hrString = "hour";
+    let minString;
+    mins > 1 ? minString = "minutes" : minString = "minutes";
+    let newRuntime;
+    // check which parts to show (mins/hrs)
+    if (hours > 0 && mins > 0) { 
+      newRuntime = `${hours} ${hrString}, ${mins} ${minString}`;
+    } else if (hours > 0 && mins < 1){
+      newRuntime = `${hours} ${hrString}`;
+    } else {
+      newRuntime = `${mins} ${minString}`;
+    }
+    return newRuntime;
+  }
+
 </script>
 
 <svelte:window on:keydown={handle_keydown}/>
@@ -33,14 +52,35 @@
         <div class="block">
           <h3 class="subtitle"><strong>Overview</strong></h3>
           <p>{details.overview}</p>
+          {#if details.tagline}
+            <br>
+            <p><i>"{details.tagline}"</i></p>
+          {/if}
         </div>
       </section>
       <section>
-        {#if details.seasons}
-          <p>{details.seasons.length} seasons</p>
+        {#if details.number_of_seasons}
+          <p>{details.number_of_seasons} {details.number_of_seasons > 1 ? "seasons" : "season"}</p>
         {/if}
-        <p><a href={details.homepage}>Homepage</a></p>
-        <p>See more on <a href={`https://www.imdb.com/title/${details.imdbId}`}>IMDB</a></p>
+        {#if details.number_of_episodes}
+          <p>{details.number_of_episodes} {details.number_of_episodes > 1 ? "episodes" : "episode"}</p>
+        {/if}
+        {#if details.homepage}
+          <p><a href={details.homepage}>Homepage</a></p>
+        {/if}
+        {#if details.imdbId}
+          <p>See more on <a href={`https://www.imdb.com/title/${details.imdbId}`}>IMDb</a></p>
+        {/if}
+        {#if details.runtime}
+          <p>Runtime: {getRuntimeInHours(details.runtime)}</p>
+        {/if}
+        {#if details.genres}
+          <p>Genres:
+          {#each details.genres as genre}
+            <a href="#">{`${genre.name}  `}</a>
+          {/each}
+          </p>
+        {/if}
       </section>
     </section>
     <footer class="modal-card-foot">

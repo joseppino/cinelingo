@@ -20,9 +20,9 @@
   <h2 class="title">Explore {capitaliseFirstLetter($langStore.languageName)} {mediaName}</h2>
   <div class="block">
     <a href={`/explore/video/${mediaRef}/popular`} use:link>Popular |</a>
-    <a href={`/browse/video/${mediaRef}/classic`} use:link>Classics |</a>
-    <a href={`/browse/video/${mediaRef}/genres`} use:link>Genres |</a>
-    <a href={`/browse/video/${mediaRef}/recommended`} use:link>Recommended</a>
+    <a href={`/explore/video/${mediaRef}/top_rated`} use:link>Top Rated |</a>
+    <a href={`/explore/video/${mediaRef}/genres`} use:link>Genres |</a>
+    <a href={`/explore/video/${mediaRef}/recommended`} use:link>Recommended</a>
   </div>
 </div>
 
