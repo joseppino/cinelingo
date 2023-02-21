@@ -63,7 +63,7 @@
             <div class="card is-clickable" 
             on:click={(e) => {
                 langStore.set({languageName: lang[0], locale: lang[1].reference, flag: lang[1].flag});
-                handleCardClick(e);
+                // handleCardClick(e);
               }
             }
             on:keypress={() => langStore.set({languageName: lang[0], locale: lang[1].reference, flag: lang[1].flag})} >
