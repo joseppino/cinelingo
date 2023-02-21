@@ -2,8 +2,11 @@
   import { langStore } from "../../stores/langStore";
   import capitaliseFirstLetter from "../../scripts/capitaliseFirstLetter";
   import { link } from "svelte-spa-router";
+  import checkAuth from "../../scripts/auth/checkAuth";
 
   export let params;
+
+  checkAuth();
 
   let mediaName;
   let mediaRef;

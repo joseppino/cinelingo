@@ -5,7 +5,6 @@
   import { updateDoc } from "firebase/firestore";
   import getUserRef from "../../scripts/auth/getUserRef";
   import getLanguages from "../../scripts/getLanguages";
-  import { onMount } from "svelte";
 
   checkAuth();
 
@@ -15,6 +14,21 @@
     const langs = await getLanguages();
     return langs;
   }
+
+  // function handleCardClick(e) { NEEDS FIXED
+  //   let styleTarget = e.target;
+  //   if(!styleTarget.classList.contains("card")) {
+  //     while (!styleTarget.classList.contains("card")) {
+  //       styleTarget = styleTarget.parentElement;
+  //       console.log(styleTarget.classList);
+  //     }
+  //   }
+  //   const shadow = getComputedStyle(styleTarget).boxShadow;
+  //   styleTarget.style.boxShadow = "0 .5em 1em -.125em #3ec487,0 0 0 1px rgba(10,10,10,.02)";
+  //   setInterval(() => {
+  //     styleTarget.style.boxShadow = "0 .5em 1em -.125em rgba(10,10,10,.3),0 0 0 1px rgba(10,10,10,.02)";
+  //   }, 1000);
+  // }
 
   async function updateLanguagePreference(data) {
     try {
@@ -37,33 +51,40 @@
 
 </script>
 
-<div class="container">
-  <p class="title has-text-weight-bold">Language Select</p>
-  <div class="columns">
-    {#await languages}
-      <p>Please wait...</p>
-    {:then languages}
-      {#each languages as lang}
-        <div class="column">
-          <div class="card is-clickable" 
-          on:click={() => langStore.set({languageName: lang[0], locale: lang[1].reference, flag: lang[1].flag})} 
-          on:keypress={() => langStore.set({languageName: lang[0], locale: lang[1].reference, flag: lang[1].flag})} >
-            <div class="card-image">
-              <img src={lang[1].imgURI} alt={lang[1].name + " flag"}>
-            </div>
-            <div class="card-footer pt-1">
-              <p class="title">{lang[1].name}</p>
+<div class="c-wrapper">
+  <div class="container">
+    <p class="title has-text-weight-bold">Language Select</p>
+    <div class="columns">
+      {#await languages}
+        <p>Please wait...</p>
+      {:then languages}
+        {#each languages as lang}
+          <div class="column">
+            <div class="card is-clickable" 
+            on:click={(e) => {
+                langStore.set({languageName: lang[0], locale: lang[1].reference, flag: lang[1].flag});
+                handleCardClick(e);
+              }
+            }
+            on:keypress={() => langStore.set({languageName: lang[0], locale: lang[1].reference, flag: lang[1].flag})} >
+              <div class="card-image">
+                <img src={lang[1].imgURI} alt={lang[1].name + " flag"}>
+              </div>
+              <div class="card-footer pt-1">
+                <p class="title">{lang[1].name}</p>
+              </div>
             </div>
           </div>
-        </div>
-      {/each}
-    {/await}
+        {/each}
+      {/await}
+    </div>
   </div>
 </div>
 
 <style>
   .card {
     box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.3),0 0 0 1px rgba(10,10,10,.02);
+    background-color: #f7f7f7;
   }
 
   .card:hover {

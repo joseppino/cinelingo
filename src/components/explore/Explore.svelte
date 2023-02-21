@@ -1,5 +1,8 @@
 <script>
   import { link } from "svelte-spa-router";
+  import checkAuth from "../../scripts/auth/checkAuth";
+
+  checkAuth();
 </script>
 
 <div class="container">

@@ -45,20 +45,22 @@
       <button class="delete" aria-label="close" on:click={close}></button>
     </header>
     <section class="modal-card-body">
-      <section class="overview">
+      <section class="overview block">
         <figure class="image modal-poster">
           <img src={`https://image.tmdb.org/t/p/w400/${details.poster_path}`} alt="Poster">
         </figure>
         <div class="block">
-          <h3 class="subtitle"><strong>Overview</strong></h3>
+          {#if details.overview}
+          <h3 class="subtitle card-subtitle"><strong>Overview</strong></h3>
           <p>{details.overview}</p>
+          {/if}
           {#if details.tagline}
             <br>
             <p><i>"{details.tagline}"</i></p>
           {/if}
         </div>
       </section>
-      <section>
+      <section class="block">
         {#if details.number_of_seasons}
           <p>{details.number_of_seasons} {details.number_of_seasons > 1 ? "seasons" : "season"}</p>
         {/if}
@@ -92,6 +94,10 @@
 <style>
   .modal-background {
     background-color: rgba(10,10,10,.1);
+  }
+
+  .card-subtitle {
+    margin-bottom: 1rem !important;
   }
 
   .overview {

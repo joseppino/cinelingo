@@ -3,7 +3,7 @@
 
   import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
   import { collection, addDoc } from "firebase/firestore";
-  import { push } from "svelte-spa-router";
+  import { link, push } from "svelte-spa-router";
   import { db } from "../../scripts/fb/firestore";
   import validateForm from "../../scripts/auth/validateRegForm";
 
@@ -19,8 +19,6 @@
   let registrationStatus = "";
   let message = "";
   let showRegStatus = false;
-
-  const returnToLogin = () => push("/login");
 
   async function handleRegistration() {
     const validation = validateForm(regForm);
@@ -59,6 +57,9 @@
       message = validation.message;
     }
     showRegStatus = true;
+    setTimeout(() => { // redirect to language select after 2 seconds
+      push("/preferences/language-select");
+    }, 2000);
   }
 
 </script>
@@ -68,10 +69,10 @@
 
   <div class="box">
     <div class="icon-text">
-      <span class="icon has-text-info is-clickable" on:click={returnToLogin} on:keypress={returnToLogin}>
+      <span class="icon has-text-info is-clickable" on:click={() => push("/login")} on:keypress={() => push("/login")}>
         <i class="fas fa-arrow-left"></i>
       </span>
-      <a href="/login">Return to Login</a>
+      <a href="/login" use:link>Return to Login</a>
     </div>
   </div>
 

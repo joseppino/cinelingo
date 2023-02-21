@@ -63,7 +63,7 @@
           <a href="#" class="navbar-item">
             Profile
           </a>
-          <a href="#" class="navbar-item">
+          <a href="/preferences" class="navbar-item" use:link>
             Preferences
           </a>
           <hr class="navbar-divider">
@@ -80,7 +80,6 @@
       </div>
     </div>
   </div>
-
 </nav>
 
 <style>

@@ -1,11 +1,12 @@
 <script>
+  import shortenDescription from "../../scripts/shortenDescription";
+
+
   export let props;
 
   const content = props.content;
   const mediaType = props.mediaType;
 
-  
-  
 </script>
 
 <div class="card">
@@ -23,7 +24,7 @@
     </div>
 
     <div class="content">
-      {content.overview}
+      {shortenDescription(content.overview)}
       <div class="genres block is-flex is-flex-direction-column mt-2">
         {#each content.genreNames as genreName}
           <a href="#">{genreName}</a>
@@ -36,6 +37,17 @@
 <style>
   .card {
     max-width: 400px;
+    padding: 1em;
+  }
+
+  .image {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .image img {
+    width: 75%;
   }
 
   .card:hover {

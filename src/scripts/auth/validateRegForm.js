@@ -11,11 +11,18 @@ export default function validateForm(regForm) {
       message: "Username must be at least 4 characters."
     }
   }
-  const regex = new RegExp(/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i); // define email validity regex
+  // const regex = new RegExp(/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i); // define email validity regex
+  const regex = new RegExp("^[^@\s]+@[^@\s]+\.[^@\s]+$"); // define email validity regex
   if (!regex.test(regForm.email)) { // if email does not meet regex critera
     return {
       valid: false,
       message: "Invalid email address."
+    }
+  }
+  if (regForm.email.length > 320) { // check email is short enough
+    return {
+      valid: false,
+      message: "Email address is too long."
     }
   }
   if (regForm.password !== regForm.passwordConf) { // check passwords match

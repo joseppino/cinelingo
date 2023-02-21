@@ -1,2 +1,0 @@
-<div>Logged Out
-</div>

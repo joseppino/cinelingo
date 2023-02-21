@@ -10,5 +10,5 @@ export const logOut = async () => {
     locale: null,
     flag: null
   });
-  push("/logout");
+  push("/");
 }

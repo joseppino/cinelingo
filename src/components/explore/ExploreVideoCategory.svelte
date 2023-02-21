@@ -7,8 +7,11 @@
   import tmdbApikey from "../../credentials/tmdbApikey";
   import { push } from "svelte-spa-router";
   import ExpandedCardModal from "./ExpandedCardModal.svelte";
+  import checkAuth from "../../scripts/auth/checkAuth";
 
   export let params;
+
+  checkAuth(); // verify user is authenticated
 
   const mediaType = params.mediaType;
   const category = params.category;
@@ -104,29 +107,29 @@
   let modalDetails = {};
 </script>
 
-<div>
+<div class="container">
   {#await mediaList}
     <p>Loading content...</p>
   {:then mediaList}
     {#if $langStore.languageName}
       <h1 class="title">Browsing {categoryTitle} {capitaliseFirstLetter($langStore.languageName)} {mediaName}</h1>
     {:else}
-    <h1 class="title">Browsing {categoryTitle} {mediaName}</h1>
+      <h1 class="title">Browsing {categoryTitle} {mediaName}</h1>
     {/if}
     <div class="wrap">
-    <ul>
-    {#each mediaList as content}
-      <li on:click={() => handleCardClick(content)} on:keypress={() => showModal = true}>
-        <ContentCard props={{
-          content: content,
-          mediaType: mediaType 
-        }} />
-      </li>
-      {#if showModal}
-        <ExpandedCardModal details={modalDetails} on:close={() => showModal = false}/>
-      {/if}
-    {/each}
-    </ul>
+      <ul>
+        {#each mediaList as content}
+          <li on:click={() => handleCardClick(content)} on:keypress={() => showModal = true}>
+            <ContentCard props={{
+              content: content,
+              mediaType: mediaType
+            }} />
+          </li>
+          {#if showModal}
+            <ExpandedCardModal details={modalDetails} on:close={() => showModal = false}/>
+          {/if}
+        {/each}
+      </ul>
     </div>
   {:catch error}
     <p>Something went wrong: {error.message}</p>
@@ -134,12 +137,13 @@
 </div>
 
 <style>
-  .wrap {
-    column-count: 3;
-    column-gap: 2rem;
+  .wrap ul{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
   }
   li {
     margin-bottom: 1rem;
-    page-break-inside: avoid;
   }
 </style>
