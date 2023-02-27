@@ -6,6 +6,7 @@ import LanguageSelect from "./components/account/LanguageSelect.svelte";
 import Explore from "./components/explore/Explore.svelte";
 import ExploreVideo from "./components/explore/ExploreVideo.svelte";
 import ExploreVideoCategory from "./components/explore/ExploreVideoCategory.svelte";
+import ExploreVideoGenres from "./components/explore/ExploreVideoGenres.svelte";
 import NotFound from "./components/nav/NotFound.svelte";
 
 
@@ -18,6 +19,7 @@ export default {
   "/preferences/language-select": LanguageSelect,
   "/explore": Explore,
   "/explore/video/:mediaType": ExploreVideo,
+  "/explore/video/genres/:mediaType": ExploreVideoGenres,
   "/explore/video/:mediaType/:category": ExploreVideoCategory,
   "*": NotFound // catch-all for undefined routes
 }

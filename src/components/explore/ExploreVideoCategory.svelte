@@ -56,10 +56,14 @@
   }
 
   async function getGenres() {
-    const req = `https://api.themoviedb.org/3/genre/${apiMediaRef}/list?api_key=${tmdbApikey}&language=en-US`;
-    const res = await fetch(req);
-    const obj = await res.json();
-    return obj.genres;
+    try {
+      const req = `https://api.themoviedb.org/3/genre/${apiMediaRef}/list?api_key=${tmdbApikey}&language=en-US`;
+      const res = await fetch(req);
+      const obj = await res.json();
+      return obj.genres;
+    } catch (e) {
+      console.log("Error fetching genre list");
+    }
   }
 
   async function loadMedia() {

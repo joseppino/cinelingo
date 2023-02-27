@@ -1,7 +1,6 @@
 <script>
   import shortenDescription from "../../scripts/shortenDescription";
 
-
   export let props;
 
   const content = props.content;

@@ -3,7 +3,7 @@
   import { langStore } from "../../stores/langStore";
   import { logOut } from "../../scripts/auth/logOut";
   import capitaliseFirstLetter from "../../scripts/capitaliseFirstLetter";
-  import { link } from "svelte-spa-router";
+  import { link, push } from "svelte-spa-router";
 
 </script>
 
@@ -14,7 +14,7 @@
       <img src="/images/sponge.png" width="30px" height="30px" alt="Website Logo"/>
     </a>
 
-    <a href="#" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
@@ -31,7 +31,7 @@
           Explore
         </a>
       <div class="navbar-dropdown">
-        <a href="/explore/video/films" use:link class="navbar-item">
+        <a href="/explore/video/films" use:link class="navbar-item" on:click={() => push("/explore/video/films")}>
           Films
         </a>
         <a href="/explore/video/tv" use:link class="navbar-item">
