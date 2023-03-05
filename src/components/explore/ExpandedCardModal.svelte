@@ -60,29 +60,49 @@
           {/if}
         </div>
       </section>
-      <section class="block">
-        {#if details.number_of_seasons}
-          <p>{details.number_of_seasons} {details.number_of_seasons > 1 ? "seasons" : "season"}</p>
+      <section class="details block">
+        <div class="block">
+          <p class="subtitle mb-1">Details</p>
+          {#if details.original_title && details.title !== details.original_title}
+            <p>Original Title: {details.original_title}</p>
+          {/if}
+          {#if details.original_name && details.name !== details.original_name}
+            <p>Original Name: {details.original_name}</p>
+          {/if}
+          {#if details.number_of_seasons}
+            <p>{details.number_of_seasons} {details.number_of_seasons > 1 ? "seasons" : "season"}</p>
+          {/if}
+          {#if details.number_of_episodes}
+            <p>{details.number_of_episodes} {details.number_of_episodes > 1 ? "episodes" : "episode"}</p>
+          {/if}
+          {#if details.homepage}
+            <p><a href={details.homepage}>Homepage</a></p>
+          {/if}
+          {#if details.imdbId}
+            <p>See more on <a href={`https://www.imdb.com/title/${details.imdbId}`}>IMDb</a></p>
+          {/if}
+          {#if details.runtime}
+            <p>Runtime: {getRuntimeInHours(details.runtime)}</p>
+          {/if}
+          {#if details.genres}
+            <p>Genres:
+            {#each details.genres as genre}
+              <a href="#">{`${genre.name}  `}</a>
+            {/each}
+            </p>
+          {/if}
+        </div>
+        {#if details.ukStreamingProviders.length}
+          <div class="block">
+            <p class="subtitle">Streaming On</p>
+            <div class="provider-list">
+              {#each details.ukStreamingProviders as provider}
+                  <img class="provider-logo" width="50px" height="50px" src={`https://image.tmdb.org/t/p/w200/${provider.logo_path}`} alt={`${provider.provider_name} logo`}>
+              {/each}
+            </div>
+          </div>
         {/if}
-        {#if details.number_of_episodes}
-          <p>{details.number_of_episodes} {details.number_of_episodes > 1 ? "episodes" : "episode"}</p>
-        {/if}
-        {#if details.homepage}
-          <p><a href={details.homepage}>Homepage</a></p>
-        {/if}
-        {#if details.imdbId}
-          <p>See more on <a href={`https://www.imdb.com/title/${details.imdbId}`}>IMDb</a></p>
-        {/if}
-        {#if details.runtime}
-          <p>Runtime: {getRuntimeInHours(details.runtime)}</p>
-        {/if}
-        {#if details.genres}
-          <p>Genres:
-          {#each details.genres as genre}
-            <a href="#">{`${genre.name}  `}</a>
-          {/each}
-          </p>
-        {/if}
+        
       </section>
     </section>
     <footer class="modal-card-foot">
@@ -96,6 +116,12 @@
     background-color: rgba(10,10,10,.1);
   }
 
+  .modal-poster {
+    width: 30%;
+    flex-shrink: 0;
+    margin-right: 10px;
+  }
+
   .card-subtitle {
     margin-bottom: 1rem !important;
   }
@@ -105,9 +131,25 @@
     flex-direction: row;
   }
 
-  .modal-poster {
-    width: 30%;
-    flex-shrink: 0;
-    margin-right: 10px;
+  .details {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
   }
+
+  .provider-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .provider-list img {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+
+  .provider-logo {
+    box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.2),0 0 0 1px rgba(10,10,10,.02);
+  }
+  
 </style>

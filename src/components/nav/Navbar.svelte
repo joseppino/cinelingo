@@ -11,7 +11,7 @@
   <script src="https://kit.fontawesome.com/04e2300274.js" crossorigin="anonymous"></script>
   <div class="navbar-brand">
     <a class="navbar-item" href="/">
-      <img src="/images/sponge.png" width="30px" height="30px" alt="Website Logo"/>
+      <img src="/images/movie-camera.png" width="30px" height="30px" alt="Website Logo"/>
     </a>
 
     <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
@@ -50,7 +50,7 @@
         <a href="/preferences/language-select" class="navbar-item" use:link>Select a language</a>
         {/if}
         <div class="navbar-item has-dropdown is-hoverable">
-          {#if $authStore.isLoggedIn}
+          {#if $authStore.isLoggedIn && $authStore.username}
             <a href="#" class="navbar-link has-icons-left">
               {$authStore.username}
             </a>

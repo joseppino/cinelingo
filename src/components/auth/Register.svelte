@@ -28,10 +28,9 @@
         // Signed in
         const user = userCredential.user;
         // add the user's chosen username
-        updateProfile(user, {
+        await updateProfile(user, {
           displayName: (regForm.username)
         });
-        console.log(user.displayName);
         registrationStatus = "success";
         try {
           const docRef = await addDoc(collection(db, "users"), {

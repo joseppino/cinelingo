@@ -12,7 +12,7 @@ export default function validateForm(regForm) {
     }
   }
   // const regex = new RegExp(/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i); // define email validity regex
-  const regex = new RegExp("^[^@\s]+@[^@\s]+\.[^@\s]+$"); // define email validity regex
+  const regex = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g); // define email validity regex
   if (!regex.test(regForm.email)) { // if email does not meet regex critera
     return {
       valid: false,

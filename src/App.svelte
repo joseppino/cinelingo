@@ -1,18 +1,13 @@
 <script>
   import Navbar from "./components/nav/Navbar.svelte";
-
   import { authStore } from "./stores/authStore";
   import firebaseConfig from "./credentials/firebaseConfig";
- 
   import { initializeApp } from 'firebase/app';
   import { getAuth, onAuthStateChanged } from "firebase/auth";
-
   import { db, setDB } from "./scripts/fb/firestore";
-
   import { langStore } from "./stores/langStore";
   import getUserRef from "./scripts/auth/getUserRef";
   import { doc, getDoc } from "firebase/firestore";
-
   import Router from "svelte-spa-router";
   import routes from "./routes";
 

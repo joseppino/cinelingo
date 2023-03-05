@@ -34,7 +34,7 @@
   async function getGenres() { // get list of genres from tmdb api for given media type
     try {
       const req = `https://api.themoviedb.org/3/genre/${apiMediaRef}/list?api_key=${tmdbApikey}&language=en-US`;
-      const res = await fetch(req);
+      const res = await fetch(req); 
       const obj = await res.json();
       return obj.genres;
     } catch (e) {
