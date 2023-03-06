@@ -6,8 +6,9 @@
   import ContentCard from "./ContentCard.svelte";
   import tmdbApikey from "../../credentials/tmdbApikey";
   import { push } from "svelte-spa-router";
-  import ExpandedCardModal from "./ExpandedCardModal.svelte";
   import checkAuth from "../../scripts/auth/checkAuth";
+  import { Modals, openModal, closeModal } from 'svelte-modals'
+  import FilterControls from "./FilterControls.svelte";
 
   export let params;
 
@@ -74,11 +75,11 @@
     let media = [];
     querySnapshot.forEach(doc => { // iterate through firestore movie collection
       const content = {...doc.data()}
-      content.genreNames = [];
+      content.genres = [];
       for (const id of content.genre_ids) {
         for (const genre of genres) {
           if (genre.id === id) { // check for matching genre ids
-            content.genreNames.push(genre.name);
+            content.genres.push({id: genre.id, name: genre.name});
           }
         }
       }
@@ -138,40 +139,82 @@
       }
 
       console.log(modalDetails);
-      showModal = true;
+      openModal(() => import("./CardModal.svelte"), {
+        info: modalDetails
+      });
     } catch (e) {
       console.log(e);
+    } 
+  }
+
+  function checkArrayIsSubset(bigArray, smallArray) {
+    if(bigArray.length < smallArray.length) return false;
+    bigArray.sort();
+    smallArray.sort();
+    for(let i=0; i<smallArray.length; i++) {
+      if(!bigArray.includes(smallArray[i])) return false;
     }
-    
+    return true;
   }
 
   const mediaList = loadMedia();
 
   let showModal = false;
   let modalDetails = {};
+
+  let selectedGenres = [];
+  $: genreFilter = selectedGenres.map((item) => item = JSON.parse(item));
+  $: console.log(genreFilter);
 </script>
+
+<Modals>
+  <div
+    slot="backdrop"
+    class="backdrop"
+    on:click={closeModal}
+    on:keyup={closeModal}
+  />
+</Modals>
 
 <div class="container">
   {#await mediaList}
     <p>Loading content...</p>
   {:then mediaList}
-    {#if $langStore.languageName}
-      <h1 class="title">Browsing {categoryTitle} {capitaliseFirstLetter($langStore.languageName)} {mediaName}</h1>
-    {:else}
-      <h1 class="title">Browsing {categoryTitle} {mediaName}</h1>
-    {/if}
+    <div class="title_controls-wrapper">
+      <h1 class="title is-size-4">
+        {#if $langStore.languageName}
+          Browsing {categoryTitle} {capitaliseFirstLetter($langStore.languageName)} {mediaName}
+        {:else}
+          Browsing {categoryTitle} {mediaName}
+        {/if}
+      </h1>
+      <div class="controls">
+        <FilterControls props={{mediaType: mediaType}} bind:selectedGenres={selectedGenres}/>
+      </div>
+    </div>
     <div class="wrap">
       <ul>
         {#each mediaList as content}
-          <li on:click={() => handleCardClick(content)} on:keypress={() => showModal = true}>
-            <ContentCard props={{
-              content: content,
-              mediaType: mediaType
-            }} />
-          </li>
-          {#if showModal}
-            <ExpandedCardModal details={modalDetails} on:close={() => showModal = false}/>
+          <!-- if user has added any genres to filter -->
+          {#if genreFilter.length}
+            <!-- Show only content that matches all filters -->
+            {#if checkArrayIsSubset(content.genre_ids, genreFilter)}
+              <li on:click={() => handleCardClick(content)} on:keyup={() => handleCardClick(content)}>
+                <ContentCard props={{
+                  content: content,
+                  mediaType: mediaType
+                }} />
+              </li>
+            {/if}
+          {:else}
+            <li on:click={() => handleCardClick(content)} on:keyup={() => handleCardClick(content)}>
+              <ContentCard props={{
+                content: content,
+                mediaType: mediaType
+              }} />
+            </li> 
           {/if}
+                       
         {/each}
       </ul>
     </div>
@@ -181,6 +224,14 @@
 </div>
 
 <style>
+  .title_controls-wrapper {
+    align-self: flex-start;
+  }
+
+  .controls {
+    margin-bottom: 10px;
+  }
+
   .wrap ul{
     display: flex;
     flex-direction: row;

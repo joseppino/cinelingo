@@ -1,7 +1,7 @@
 {
   "name": "cinelingo",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.5.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -16,6 +16,7 @@
   "dependencies": {
     "bulma": "^0.9.4",
     "firebase": "^9.14.0",
+    "svelte-modals": "^1.2.1",
     "svelte-spa-router": "^3.3.0"
   }
 }

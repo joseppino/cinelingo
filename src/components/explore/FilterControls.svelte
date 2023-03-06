@@ -1,12 +1,11 @@
 <script>
+  import { onDestroy } from "svelte";
   import tmdbApikey from "../../credentials/tmdbApikey";
-  import checkAuth from "../../scripts/auth/checkAuth";
 
-  export let params; // declare params prop
+  export let props;
+  export let selectedGenres = [];
 
-  checkAuth();
-
-  const mediaType = params.mediaType;
+  const mediaType = props.mediaType;
 
   let genreSelectDropdown;
   let sortByDropDown;
@@ -41,7 +40,10 @@
     }
   }
 
-  let selectedGenres = [];
+  onDestroy(() => { 
+    selectedGenres = [];
+  });
+  
 </script>
 
 <div class="wrapper">
@@ -53,7 +55,7 @@
       on:keypress={() => genreSelectDropdown.classList.toggle("is-active")} 
       on:focusout={() => genreSelectDropdown.classList.remove("is-active")}>
       <div class="dropdown-trigger">
-        <button class="button is-rounded is-size-5" aria-haspopup="true" aria-controls="dropdown-menu">
+        <button class="button is-rounded is-size-6" aria-haspopup="true" aria-controls="dropdown-menu">
           <span>Select Genres</span>
           <span class="icon is-small">
             <i class="fas fa-angle-down" aria-hidden="true"></i>
@@ -67,8 +69,9 @@
             <!-- <a class="dropdown-item" on:click={() => console.log(genre.name)}>
               {genre.name}
             </a> -->
-            <label class="checkbox is-size-5">
-              <input type="checkbox" bind:group={selectedGenres} value={JSON.stringify({genre_id: genre.id, genre_name: genre.name})}>
+            <label class="checkbox is-size-6">
+              <!-- <input type="checkbox" bind:group={selectedGenres} value={JSON.stringify({genre_id: genre.id, genre_name: genre.name})}> -->
+              <input type="checkbox" bind:group={selectedGenres} value={genre.id}>
               <span>{genre.name}</span>
             </label>
           {/each}
@@ -80,7 +83,7 @@
       on:keypress={() => sortByDropDown.classList.toggle("is-active")} 
       on:focusout={() => sortByDropDown.classList.remove("is-active")}>
       <div class="dropdown-trigger">
-        <button class="button is-rounded is-size-5" aria-haspopup="true" aria-controls="dropdown-menu">
+        <button class="button is-rounded is-size-6" aria-haspopup="true" aria-controls="dropdown-menu">
           <span>Sort By</span>
           <span class="icon is-small">
             <i class="fas fa-angle-down" aria-hidden="true"></i>
@@ -99,10 +102,6 @@
 </div>
 
 <style>
-  .wrapper {
-    align-self: flex-start;
-    position: fixed;
-  }
   .genre-select {
     max-height: 250px;
     width: 250px;
@@ -111,5 +110,6 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    padding-left: 5px;
   }
 </style>

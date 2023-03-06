@@ -1,5 +1,6 @@
 <script>
   import shortenDescription from "../../scripts/shortenDescription";
+  import GenreTag from "./GenreTag.svelte";
 
   export let props;
 
@@ -24,9 +25,10 @@
 
     <div class="content">
       {shortenDescription(content.overview)}
-      <div class="genres block is-flex is-flex-direction-column mt-2">
-        {#each content.genreNames as genreName}
-          <a href="#">{genreName}</a>
+      <div class="genres block mt-2">
+        {#each content.genres as genre}
+          <!-- <a href="#">{genreName}</a> -->
+          <GenreTag {genre} />
         {/each}
       </div>
     </div>
@@ -39,6 +41,11 @@
     padding: 1em;
   }
 
+  .card:hover {
+    box-shadow: 0 .5em 1em -.125em rgba(10,10,10,0.6),0 0 0 1px rgba(10,10,10,.02);
+    cursor: pointer;
+  }
+
   .image {
     display: flex;
     flex-direction: row;
@@ -49,8 +56,11 @@
     width: 60%;
   }
 
-  .card:hover {
-    box-shadow: 0 .5em 1em -.125em rgba(10,10,10,0.6),0 0 0 1px rgba(10,10,10,.02);
-    cursor: pointer;
+  .genres {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 100%;
   }
 </style>
