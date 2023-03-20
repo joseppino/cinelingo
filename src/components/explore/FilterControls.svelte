@@ -1,14 +1,16 @@
 <script>
-  import { onDestroy } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import tmdbApikey from "../../credentials/tmdbApikey";
+  import capitaliseFirstLetter from "../../scripts/capitaliseFirstLetter";
 
   export let props;
   export let selectedGenres = [];
+  export let sortBy;
 
   const mediaType = props.mediaType;
 
   let genreSelectDropdown;
-  let sortByDropDown;
+  let sortByDropdown;
 
   let apiMediaRef; // declare correct term for api call (movie/tv)
   if (mediaType === "films") {
@@ -78,13 +80,17 @@
         </div>
       </div>
     </div>
-    <div class="dropdown is-hoverable" bind:this={sortByDropDown} 
-      on:click={() => sortByDropDown.classList.toggle("is-active")} 
-      on:keypress={() => sortByDropDown.classList.toggle("is-active")} 
-      on:focusout={() => sortByDropDown.classList.remove("is-active")}>
+    <div class="dropdown is-hoverable" bind:this={sortByDropdown} 
+      on:click={() => sortByDropdown.classList.toggle("is-active")} 
+      on:keypress={() => sortByDropdown.classList.toggle("is-active")} 
+      on:focusout={() => sortByDropdown.classList.remove("is-active")}>
       <div class="dropdown-trigger">
         <button class="button is-rounded is-size-6" aria-haspopup="true" aria-controls="dropdown-menu">
-          <span>Sort By</span>
+          {#if sortBy}
+          <span>Sorting By {capitaliseFirstLetter(sortBy)} <i class="fa-solid fa-arrow-trend-down"></i></span>
+          {:else}
+            <span>Sort By</span>
+          {/if}
           <span class="icon is-small">
             <i class="fas fa-angle-down" aria-hidden="true"></i>
           </span>
@@ -92,9 +98,21 @@
       </div>
       <div class="dropdown-menu" id="dropdown-menu2" role="menu">
         <div class="dropdown-content">
-          <a class="dropdown-item">Popularity</a>
-          <a class="dropdown-item">Rating</a>
-          <a class="dropdown-item">Name (A-Z)</a>
+          <!-- svelte-ignore a11y-missing-attribute -->
+          <a class="dropdown-item" 
+          on:click={() => sortBy = "popularity"}
+          on:keyup={() => sortBy = "popularity"}
+          >Popularity </a>
+          <!-- svelte-ignore a11y-missing-attribute -->
+          <a class="dropdown-item"
+          on:click={() => sortBy = "rating"}
+          on:keyup={() => sortBy = "rating"}
+          >Rating </a>
+          <!-- svelte-ignore a11y-missing-attribute -->
+          <a class="dropdown-item"
+          on:click={() => sortBy = "alphabetical"}
+          on:keyup={() => sortBy = "alphabetical"}
+          >Alphabetical (A-Z)</a>
         </div>
       </div>
     </div>

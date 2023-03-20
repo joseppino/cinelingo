@@ -1,6 +1,8 @@
 <script>
   import shortenDescription from "../../scripts/shortenDescription";
   import GenreTag from "./GenreTag.svelte";
+  import { fly } from "svelte/transition";
+  import { onMount } from "svelte";
 
   export let props;
 
@@ -9,7 +11,7 @@
 
 </script>
 
-<div class="card">
+<div class="card" in:fly="{{ y: 200, duration: 2000 }}">
   <div class="card-image">
     <figure class="image">
       <img src={`https://image.tmdb.org/t/p/w400/${content.poster_path}`} alt="Poster">
@@ -27,7 +29,6 @@
       {shortenDescription(content.overview)}
       <div class="genres block mt-2">
         {#each content.genres as genre}
-          <!-- <a href="#">{genreName}</a> -->
           <GenreTag {genre} />
         {/each}
       </div>
@@ -37,7 +38,8 @@
 
 <style>
   .card {
-    max-width: 400px;
+    min-width: 340px;
+    max-width: 380px;
     padding: 1em;
   }
 

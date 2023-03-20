@@ -1,9 +1,37 @@
 <script>
+  import { addDoc, deleteDoc, collection, getDoc, getDocs, setDoc, doc } from "firebase/firestore";
+  import { onMount } from "svelte";
   import { closeModal } from "svelte-modals";
+  import getUserRef from "../../scripts/auth/getUserRef";
+  import { db } from "../../scripts/fb/firestore";
+  import { authStore } from "../../stores/authStore";
   import GenreTag from "./GenreTag.svelte";
 
+  // declare props
   export let isOpen;
   export let info;
+  export let showWatchlistBtn = true;
+
+  const contentDbRef = `${info.mediaType.charAt(0)}${info.id}`; // format of media type + content id for usage as the db document id
+
+  let onWatchlist = false;
+  let isLiked = false;
+  let isDisliked = false;
+
+  const checkIfOnWatchlist = async() => {
+    try {
+      const userRef = await getUserRef($authStore.email);
+      const userId = (await getDoc(userRef)).id;
+      const querySnapshot = await getDocs(collection(db, `users/${userId}/watchlist`));
+      querySnapshot.forEach(doc => {
+        if(doc.id === contentDbRef) {
+          onWatchlist = true;
+        }
+      });
+    } catch(e) {
+      console.log(e);
+    }
+  }
 
   const getRuntimeInHours = (runtime) => {
     const hours = Math.floor(runtime / 60);
@@ -24,6 +52,35 @@
     return newRuntime;
   }
 
+  const addToWatchlist = async() => {
+    try {
+      onWatchlist = true; // update button state
+      const userRef = await getUserRef($authStore.email);
+      const userId = (await getDoc(userRef)).id;
+      const docRef = await setDoc(doc(db, `users/${userId}/watchlist`, contentDbRef), {...info}); // spread content info into new firebase doc in watchlist collection
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  const removeFromWatchlist = async() => {
+    try {
+      onWatchlist = false; // update button state
+      const userRef = await getUserRef($authStore.email);
+      const userId = (await getDoc(userRef)).id;
+      const querySnapshot = await getDocs(collection(db, `users/${userId}/watchlist`));
+      querySnapshot.forEach(doc => {
+        if(doc.id === contentDbRef) {
+          deleteDoc(doc.ref); // delete doc from watchlist
+        }
+      });
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  onMount(checkIfOnWatchlist);
+
 </script>
 
 {#if isOpen}
@@ -35,6 +92,12 @@
         <button class="delete" aria-label="close" on:click={closeModal}></button>
       </header>
       <section class="modal-card-body">
+        <!-- <section class="trailer-embed">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/PuTe6i8A3Ug" 
+            title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
+            encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
+          </iframe>
+        </section> -->
         <section class="overview block">
           <figure class="image modal-poster">
             <img src={`https://image.tmdb.org/t/p/w400/${info.poster_path}`} alt="Poster">
@@ -102,7 +165,37 @@
         </section>
       </section>
       <footer class="modal-card-foot">
-        <button class="button is-success">Save to a list</button>
+        {#if !onWatchlist && showWatchlistBtn}
+          <button class="button" on:click={addToWatchlist}>
+            <span class="icon">
+              <i class="fa-solid fa-plus"></i>
+            </span>
+            <span>Save to Watchlist</span>
+          </button>
+        {:else if onWatchlist && showWatchlistBtn}
+          <button class="button is-success" on:click={removeFromWatchlist}>
+            <span class="icon">
+              <i class="fa-solid fa-check"></i>
+            </span>
+            <span>Saved to Watchlist!</span>
+          </button>
+        {/if}
+
+        <div class="div">
+          <button class="button">
+            <span class="icon">
+              <i class="fa-regular fa-thumbs-up"></i>
+              <!-- <i class="fa-solid fa-thumbs-up"></i> -->
+            </span>
+          </button>
+
+          <button class="button">
+            <span class="icon">
+              <i class="fa-regular fa-thumbs-down"></i>
+              <!-- <i class="fa-solid fa-thumbs-down"></i> -->
+            </span>
+          </button>
+        </div>
       </footer>
     </div>
   </div>
@@ -162,6 +255,10 @@
 
   .provider-logo {
     box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.2),0 0 0 1px rgba(10,10,10,.02);
+  }
+
+  .modal-card-foot {
+    justify-content: space-around;
   }
   
 </style>

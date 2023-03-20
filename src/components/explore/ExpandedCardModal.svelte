@@ -79,7 +79,13 @@
             <p><a href={details.homepage}>Homepage</a></p>
           {/if}
           {#if details.imdbId}
-            <p>See more on <a href={`https://www.imdb.com/title/${details.imdbId}`}>IMDb</a></p>
+          <!-- SHOULD OPEN IN A NEW TAB - FIX NEEDED -->
+            <!-- <p>See more on </p><a href={`https://www.imdb.com/title/${details.imdbId}`} target="_blank" rel="noreferrer">IMDb</a> -->
+            <p>See more on </p><a on:click={() => {
+                  let redirectWindow =window.open(`https://www.imdb.com/title/${details.imdbId}`, "_blank");
+                  redirectWindow.location;
+                }
+              }>IMDb</a>
           {/if}
           {#if details.runtime}
             <p>Runtime: {getRuntimeInHours(details.runtime)}</p>

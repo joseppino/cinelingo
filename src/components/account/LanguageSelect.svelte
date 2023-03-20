@@ -5,6 +5,7 @@
   import { updateDoc } from "firebase/firestore";
   import getUserRef from "../../scripts/auth/getUserRef";
   import getLanguages from "../../scripts/getLanguages";
+  import { fly } from "svelte/transition";
 
   checkAuth();
 
@@ -60,7 +61,7 @@
       {:then languages}
         {#each languages as lang}
           <div class="column">
-            <div class="card is-clickable" 
+            <div class="card is-clickable" in:fly="{{ y: 200, duration: 2000 }}"
             on:click={(e) => {
                 langStore.set({languageName: lang[0], locale: lang[1].reference, flag: lang[1].flag});
                 // handleCardClick(e);

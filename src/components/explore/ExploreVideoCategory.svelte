@@ -7,8 +7,9 @@
   import tmdbApikey from "../../credentials/tmdbApikey";
   import { push } from "svelte-spa-router";
   import checkAuth from "../../scripts/auth/checkAuth";
-  import { Modals, openModal, closeModal } from 'svelte-modals'
+  import { Modals, openModal, closeModal } from 'svelte-modals';
   import FilterControls from "./FilterControls.svelte";
+  import { onMount } from "svelte";
 
   export let params;
 
@@ -147,6 +148,7 @@
     } 
   }
 
+  // checks one array is a subset of another, such that filtering rules can be applied correctly.
   function checkArrayIsSubset(bigArray, smallArray) {
     if(bigArray.length < smallArray.length) return false;
     bigArray.sort();
@@ -157,14 +159,41 @@
     return true;
   }
 
-  const mediaList = loadMedia();
+  function sortContentAlphabetically(unsorted) {
+    if(mediaName === "Television") {
+      return unsorted.sort((a, b) => a.name.localeCompare(b.name));
+    } else {
+      return unsorted.sort((a, b) => a.title.localeCompare(b.title));
+    }
+  }
 
-  let showModal = false;
+  const sortContentByRating = (unsorted) => unsorted.sort((a, b) => a.vote_average < b.vote_average);
+
+  const sortContentByPopularity = (unsorted) => unsorted.sort((a, b) => a.popularity < b.popularity);
+
+  async function sortContent(mList, sortBy) {
+    let media = await mList;
+    switch (sortBy) {
+      case "popularity":
+        media = sortContentByPopularity(media);
+        break;
+      case "rating":
+        media = sortContentByRating(media);
+        break;
+      case "alphabetical":
+        media = sortContentAlphabetically(media);
+        break;
+      default:
+        break;
+    }
+    return media;
+  }
+  
+  $: mediaList = sortContent(loadMedia(), sortBy);
   let modalDetails = {};
-
   let selectedGenres = [];
   $: genreFilter = selectedGenres.map((item) => item = JSON.parse(item));
-  $: console.log(genreFilter);
+  let sortBy;
 </script>
 
 <Modals>
@@ -176,10 +205,10 @@
   />
 </Modals>
 
-<div class="container">
+<div class="wrapper">
   {#await mediaList}
     <p>Loading content...</p>
-  {:then mediaList}
+  {:then mediaList} 
     <div class="title_controls-wrapper">
       <h1 class="title is-size-4">
         {#if $langStore.languageName}
@@ -189,7 +218,7 @@
         {/if}
       </h1>
       <div class="controls">
-        <FilterControls props={{mediaType: mediaType}} bind:selectedGenres={selectedGenres}/>
+        <FilterControls props={{mediaType: mediaType}} bind:selectedGenres={selectedGenres} bind:sortBy={sortBy}/>
       </div>
     </div>
     <div class="wrap">
@@ -212,9 +241,8 @@
                 content: content,
                 mediaType: mediaType
               }} />
-            </li> 
+            </li>
           {/if}
-                       
         {/each}
       </ul>
     </div>
@@ -224,7 +252,10 @@
 </div>
 
 <style>
-  .title_controls-wrapper {
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-self: flex-start;
   }
 
@@ -236,10 +267,12 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-evenly;
+    justify-content: center;
+    width: 80vw;
   }
 
   li {
     margin-bottom: 1rem;
+    margin: 20px;
   }
 </style>

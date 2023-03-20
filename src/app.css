@@ -44,16 +44,16 @@ h1 {
   padding: 2em;
 }
 
-#app {
-  /* display: flex;
+/* #app {
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   max-width: 1600px;
   padding: 2rem;
   text-align: center;
-  padding-top: 75px; */
-}
+  padding-top: 75px;
+} */
 
 main {
   display: flex;

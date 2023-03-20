@@ -59,7 +59,10 @@
               Account
             </a>
           {/if}
-        <div class="navbar-dropdown">
+        <div class="navbar-dropdown is-right">
+          <a href="/watchlist" class="navbar-item" use:link>
+            Watchlist
+          </a>
           <a href="#" class="navbar-item">
             Profile
           </a>
@@ -85,7 +88,8 @@
 <style>
   .navbar {
     border-bottom: none;
-    background-color: #5AA9E6;
+    /* background-color: #5AA9E6; */
+    background-color: #a39dc1;
     color: #000000;
     box-shadow: 0px 0px 6px 1px #000000;
   }

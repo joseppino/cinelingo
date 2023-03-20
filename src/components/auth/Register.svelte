@@ -36,7 +36,10 @@
           const docRef = await addDoc(collection(db, "users"), {
             email: regForm.email,
             username: regForm.username,
-            languagePreference: null
+            languagePreference: null,
+            watchlist: null,
+            liked: null,
+            disliked: null
           });
           console.log("Document written with ID: ", docRef.id);
         } catch (e) {
