@@ -1,3 +1,3 @@
-# Spongebath
+# Cinelingo 🎥
 
 My FYP
