@@ -18,16 +18,33 @@
   let isLiked = false;
   let isDisliked = false;
 
-  const checkIfOnWatchlist = async() => {
+  $: console.log("Liked:", isLiked);
+  $: console.log("Disliked:", isDisliked);
+
+  const checkButtonStates = async() => {
     try {
       const userRef = await getUserRef($authStore.email);
       const userId = (await getDoc(userRef)).id;
-      const querySnapshot = await getDocs(collection(db, `users/${userId}/watchlist`));
-      querySnapshot.forEach(doc => {
+      const querySnapshotWatchlist = await getDocs(collection(db, `users/${userId}/watchlist`));
+      querySnapshotWatchlist.forEach(doc => {
         if(doc.id === contentDbRef) {
           onWatchlist = true;
         }
       });
+      const querySnapshotLiked = await getDocs(collection(db, `users/${userId}/liked`));
+      querySnapshotLiked.forEach(doc => {
+        if(doc.id === contentDbRef) {
+          isLiked = true;
+        }
+      });
+      if(!isLiked) { // like/dislike are mutually exclusive, so if isLiked is true above, this can be skipped
+        const querySnapshotDisliked = await getDocs(collection(db, `users/${userId}/disliked`));
+        querySnapshotDisliked.forEach(doc => {
+          if(doc.id === contentDbRef) {
+            isDisliked = true;
+          }
+        });
+      }
     } catch(e) {
       console.log(e);
     }
@@ -79,7 +96,58 @@
     }
   }
 
-  onMount(checkIfOnWatchlist);
+  const addToLikedOrDisliked = async(userId, collectionName) => await setDoc(doc(db, `users/${userId}/${collectionName}`, contentDbRef), {...info}); // spread content info into new firebase doc in liked collection
+
+  const removeFromLikedOrDisliked = async(userId, collectionName) => {
+    const querySnapshot = await getDocs(collection(db, `users/${userId}/${collectionName}`));
+    querySnapshot.forEach(doc => {
+      if(doc.id === contentDbRef) {
+        deleteDoc(doc.ref); // remove item from "liked" collection
+      }
+    });
+  }
+
+  const handleLikeClick = async() => {
+    try {
+      const userRef = await getUserRef($authStore.email);
+      const userId = (await getDoc(userRef)).id;
+      if(isDisliked) { // states are mutually exclusive; if liked, remove dislike
+        isDisliked = false; // update button state
+        removeFromLikedOrDisliked(userId, "disliked");
+      }
+      if(isLiked) { // check if content is already liked
+        isLiked = false; // update button state
+        removeFromLikedOrDisliked(userId, "liked");
+      } else {
+        isLiked = true; // update button state
+        addToLikedOrDisliked(userId, "liked");
+      }
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  const handleDislikeClick = async() => {
+    try {
+      const userRef = await getUserRef($authStore.email);
+      const userId = (await getDoc(userRef)).id;
+      if(isLiked) { // states are mutually exclusive; if disliked, remove like
+         isLiked = false; // update button state
+         removeFromLikedOrDisliked(userId, "liked");
+      }
+      if(isDisliked) { // check if content is already disliked (toggle action)
+        isDisliked = false; // update button state
+        removeFromLikedOrDisliked(userId, "disliked");
+      } else {
+        isDisliked = true; // update button state
+        addToLikedOrDisliked(userId, "disliked");
+      }
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  onMount(checkButtonStates); // update button states when component is mounted to DOM
 
 </script>
 
@@ -181,18 +249,24 @@
           </button>
         {/if}
 
-        <div class="div">
-          <button class="button">
+        <div>
+          <button class="button" on:click={handleLikeClick}>
             <span class="icon">
-              <i class="fa-regular fa-thumbs-up"></i>
-              <!-- <i class="fa-solid fa-thumbs-up"></i> -->
+              {#if isLiked}
+                <i class="fa-solid fa-thumbs-up"></i>
+              {:else}
+                  <i class="fa-regular fa-thumbs-up"></i>
+              {/if}
             </span>
           </button>
 
-          <button class="button">
+          <button class="button" on:click={handleDislikeClick}>
             <span class="icon">
-              <i class="fa-regular fa-thumbs-down"></i>
-              <!-- <i class="fa-solid fa-thumbs-down"></i> -->
+              {#if isDisliked}
+                <i class="fa-solid fa-thumbs-down"></i>
+              {:else}
+                <i class="fa-regular fa-thumbs-down"></i>
+              {/if}
             </span>
           </button>
         </div>

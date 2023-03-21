@@ -52,11 +52,13 @@
     align-items: center;
     max-height: 150px;
     height: 150px;
-    min-width: 325px;
+    width: 500px;
+    max-width: 80vw;
     margin-right: 0;
     margin-left: 0;
     padding: 0;
     padding-left: 10px;
+    overflow-y: hidden;
   }
 
   .watchlist-item:hover {
