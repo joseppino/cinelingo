@@ -16,6 +16,7 @@
   "dependencies": {
     "bulma": "^0.9.4",
     "firebase": "^9.14.0",
+    "svelte-french-toast": "^1.0.4-beta.0",
     "svelte-modals": "^1.2.1",
     "svelte-spa-router": "^3.3.0"
   }

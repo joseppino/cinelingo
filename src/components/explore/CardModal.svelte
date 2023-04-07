@@ -18,9 +18,6 @@
   let isLiked = false;
   let isDisliked = false;
 
-  $: console.log("Liked:", isLiked);
-  $: console.log("Disliked:", isDisliked);
-
   const checkButtonStates = async() => {
     try {
       const userRef = await getUserRef($authStore.email);
@@ -198,10 +195,10 @@
                 <p>{info.number_of_episodes} {info.number_of_episodes > 1 ? "episodes" : "episode"}</p>
               {/if}
               {#if info.homepage}
-                <p><a href={info.homepage}>Homepage</a></p>
+                <p><a href={info.homepage} target="_blank" rel="noreferrer">Homepage</a></p>
               {/if}
               {#if info.imdbId}
-                <p>See more on <a href={`https://www.imdb.com/title/${info.imdbId}`}>IMDb</a></p>
+                <p>See more on <a href={`https://www.imdb.com/title/${info.imdbId}`} target="_blank" rel="noreferrer">IMDb</a></p>
               {/if}
               {#if info.runtime}
                 <p>Runtime: {getRuntimeInHours(info.runtime)}</p>

@@ -1,11 +1,11 @@
 <script>
   import StatusModal from "./StatusModal.svelte";
-
   import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
   import { collection, addDoc } from "firebase/firestore";
   import { link, push } from "svelte-spa-router";
   import { db } from "../../scripts/fb/firestore";
   import validateForm from "../../scripts/auth/validateRegForm";
+  import toast from "svelte-french-toast";
 
   const auth = getAuth();
 
@@ -16,9 +16,7 @@
     "passwordConf": ""
   };
 
-  let registrationStatus = "";
   let message = "";
-  let showRegStatus = false;
 
   async function handleRegistration() {
     const validation = validateForm(regForm);
@@ -31,7 +29,7 @@
         await updateProfile(user, {
           displayName: (regForm.username)
         });
-        registrationStatus = "success";
+        toast.success("Registration Successful");
         try {
           const docRef = await addDoc(collection(db, "users"), {
             email: regForm.email,
@@ -49,19 +47,36 @@
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
-        registrationStatus = "failure";
         message = errorMessage;
+        toast.error(
+          `Registration Failed \n\n ${translateFirebaseErrorCode(errorCode)}.`,
+          {
+            duration: 3000
+          }
+        );
       }
     }
     else {
       console.log("Failed:", validation.message);
-      registrationStatus = "failed";
       message = validation.message;
+      toast.error(
+        `Registration Failed \n\n ${message}.`,
+        {
+          duration: 3000
+        }
+      );
     }
-    showRegStatus = true;
     setTimeout(() => { // redirect to language select after 2 seconds
       push("/preferences/language-select");
     }, 2000);
+    
+  }
+
+  // translates a firebase error code to a user-legible error message
+  function translateFirebaseErrorCode(errorCode) {
+    if(errorCode === "auth/email-already-in-use") {
+      return "Email already in use";
+    }
   }
 
 </script>
@@ -122,10 +137,10 @@
     <button class="button is-info is-rounded" on:click={handleRegistration}>Register</button>
     
   </div>
-
-  {#if showRegStatus}
-    <StatusModal bind:registrationStatus={registrationStatus} bind:message={message} bind:showRegStatus={showRegStatus}/>
-  {/if}
 </div>
 
-<style></style>
+<style>
+  .message {
+    background-color: #FFFFFF;
+  }
+</style>

@@ -76,7 +76,7 @@
 
   let emailInput;
   const checkEmail = () => {
-    let regex = new RegExp(/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i); // define email validity regex
+    let regex = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g); // define email validity regex
     if (regex.test(loginForm.email)) { // if email meets regex critera
       emailInput.classList.add("is-success");
       emailInput.classList.remove("is-danger");

@@ -10,6 +10,7 @@
   import { doc, getDoc } from "firebase/firestore";
   import Router from "svelte-spa-router";
   import routes from "./routes";
+  import { Toaster } from "svelte-french-toast";
 
   const app = initializeApp(firebaseConfig); //initialise Firebase backend
   setDB(app);
@@ -66,7 +67,7 @@
   <!-- Define routes for application to give structure -->
   <Router {routes} />
 </main>
-
+<Toaster />
 
 
 <style></style>
