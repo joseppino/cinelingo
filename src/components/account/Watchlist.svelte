@@ -6,6 +6,9 @@
   import WatchlistItem from "./WatchlistItem.svelte";
   import { Modals, openModal, closeModal } from 'svelte-modals';
   import tmdbApikey from "../../credentials/tmdbApikey";
+  import checkAuth from "../../scripts/auth/checkAuth";
+
+  checkAuth();
 
   let watchlist = getWatchlist();
   let modalDetails = {};

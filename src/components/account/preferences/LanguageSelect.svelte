@@ -1,10 +1,10 @@
 <script>
-  import { authStore } from "../../stores/authStore";
-  import { langStore } from "../../stores/langStore";
-  import checkAuth from "../../scripts/auth/checkAuth";
+  import { authStore } from "../../../stores/authStore";
+  import { langStore } from "../../../stores/langStore";
+  import checkAuth from "../../../scripts/auth/checkAuth";
   import { updateDoc } from "firebase/firestore";
-  import getUserRef from "../../scripts/auth/getUserRef";
-  import getLanguages from "../../scripts/getLanguages";
+  import getUserRef from "../../../scripts/auth/getUserRef";
+  import getLanguages from "../../../scripts/getLanguages";
   import { fly } from "svelte/transition";
 
   checkAuth();
@@ -52,33 +52,31 @@
 
 </script>
 
-<div class="c-wrapper">
-  <div class="container">
-    <p class="title has-text-weight-bold">Language Select</p>
-    <div class="columns">
-      {#await languages}
-        <p>Please wait...</p>
-      {:then languages}
-        {#each languages as lang}
-          <div class="column">
-            <div class="card is-clickable" in:fly="{{ y: 200, duration: 2000 }}"
+<div class="container">
+  <p class="title has-text-weight-bold">Select a language to learn</p>
+  <div class="columns">
+    {#await languages}
+      <p>Please wait...</p>
+    {:then languages}
+      {#each languages as lang}   
+        <div class="column">
+          <div class="card is-clickable" in:fly="{{ y: 200, duration: 2000 }}"
             on:click={(e) => {
                 langStore.set({languageName: lang[0], locale: lang[1].reference, flag: lang[1].flag});
                 // handleCardClick(e);
               }
             }
             on:keypress={() => langStore.set({languageName: lang[0], locale: lang[1].reference, flag: lang[1].flag})} >
-              <div class="card-image">
-                <img src={lang[1].imgURI} alt={lang[1].name + " flag"}>
-              </div>
-              <div class="card-footer pt-1">
-                <p class="title">{lang[1].name}</p>
-              </div>
+            <div class="card-image">
+              <img src={lang[1].imgURI} alt={lang[1].name + " flag"}>
+            </div>
+            <div class="card-footer pt-1">
+              <p class="subtitle">{lang[1].name}</p>
             </div>
           </div>
-        {/each}
-      {/await}
-    </div>
+        </div>
+      {/each}
+    {/await}
   </div>
 </div>
 
@@ -86,10 +84,15 @@
   .card {
     box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.3),0 0 0 1px rgba(10,10,10,.02);
     background-color: #f7f7f7;
+    padding: 10px;
   }
 
   .card:hover {
     box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.7),0 0 0 1px rgba(10,10,10,.02);
+  }
+
+  .card-image {
+    padding: 3px;
   }
 
   .card-footer {

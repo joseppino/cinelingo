@@ -1,5 +1,5 @@
 <script>
-  import { addDoc, deleteDoc, collection, getDoc, getDocs, setDoc, doc } from "firebase/firestore";
+  import { deleteDoc, collection, getDoc, getDocs, setDoc, doc } from "firebase/firestore";
   import { onMount } from "svelte";
   import { closeModal } from "svelte-modals";
   import getUserRef from "../../scripts/auth/getUserRef";
@@ -93,7 +93,11 @@
     }
   }
 
-  const addToLikedOrDisliked = async(userId, collectionName) => await setDoc(doc(db, `users/${userId}/${collectionName}`, contentDbRef), {...info}); // spread content info into new firebase doc in liked collection
+  const addToLikedOrDisliked = async(userId, collectionName) => {
+    const timestamp = Date.now();
+    // spread content info into new firebase doc in liked collection along with timestamp
+    await setDoc(doc(db, `users/${userId}/${collectionName}`, contentDbRef), { ...info, timestamp });
+  }
 
   const removeFromLikedOrDisliked = async(userId, collectionName) => {
     const querySnapshot = await getDocs(collection(db, `users/${userId}/${collectionName}`));
@@ -108,11 +112,13 @@
     try {
       const userRef = await getUserRef($authStore.email);
       const userId = (await getDoc(userRef)).id;
-      if(isDisliked) { // states are mutually exclusive; if liked, remove dislike
+
+      if (isDisliked) { // states are mutually exclusive; if liked, remove dislike
         isDisliked = false; // update button state
         removeFromLikedOrDisliked(userId, "disliked");
       }
-      if(isLiked) { // check if content is already liked
+
+      if (isLiked) { // check if content is already liked
         isLiked = false; // update button state
         removeFromLikedOrDisliked(userId, "liked");
       } else {
@@ -128,11 +134,13 @@
     try {
       const userRef = await getUserRef($authStore.email);
       const userId = (await getDoc(userRef)).id;
-      if(isLiked) { // states are mutually exclusive; if disliked, remove like
+
+      if (isLiked) { // states are mutually exclusive; if disliked, remove like
          isLiked = false; // update button state
          removeFromLikedOrDisliked(userId, "liked");
       }
-      if(isDisliked) { // check if content is already disliked (toggle action)
+
+      if (isDisliked) { // check if content is already disliked (toggle action)
         isDisliked = false; // update button state
         removeFromLikedOrDisliked(userId, "disliked");
       } else {

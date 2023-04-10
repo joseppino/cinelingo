@@ -4,6 +4,9 @@
   import { logOut } from "../../scripts/auth/logOut";
   import capitaliseFirstLetter from "../../scripts/capitaliseFirstLetter";
   import { link, push } from "svelte-spa-router";
+  import { clickOutside } from "../../scripts/clickOutside";
+
+  let navBurger;
 
 </script>
 
@@ -14,7 +17,26 @@
       <img src="/images/movie-camera.png" width="30px" height="30px" alt="Website Logo"/>
     </a>
 
-    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarMenu">
+    <!-- svelte-ignore a11y-missing-attribute -->
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" 
+    data-target="navbarMenu"
+    use:clickOutside
+    bind:this={navBurger} 
+    on:click={() => {
+        const target = navBurger.dataset.target;
+        const $target = document.getElementById(target);
+        navBurger.classList.toggle("is-active");
+        $target.classList.toggle('is-active');
+      }
+    }
+    on:keyup={() => navBurger.classList.toggle("is-active")}
+    on:click_outside={() => {
+        const target = navBurger.dataset.target;
+        const $target = document.getElementById(target);
+        navBurger.classList.remove("is-active");
+        $target.classList.remove('is-active');
+      }
+    }>
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>

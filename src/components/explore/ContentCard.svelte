@@ -2,7 +2,6 @@
   import shortenDescription from "../../scripts/shortenDescription";
   import GenreTag from "./GenreTag.svelte";
   import { fly } from "svelte/transition";
-  import { onMount } from "svelte";
 
   export let props;
 

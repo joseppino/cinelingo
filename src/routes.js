@@ -4,8 +4,7 @@ import Home from "./components/home/Home.svelte";
 import Login from "./components/auth/Login.svelte";
 import Register from "./components/auth/Register.svelte";
 import Watchlist from "./components/account/Watchlist.svelte";
-import Preferences from "./components/account/Preferences.svelte";
-import LanguageSelect from "./components/account/LanguageSelect.svelte";
+import Preferences from "./components/account/preferences/Preferences.svelte";
 import Explore from "./components/explore/Explore.svelte";
 import ExploreVideo from "./components/explore/ExploreVideo.svelte";
 import ExploreVideoCategory from "./components/explore/ExploreVideoCategory.svelte";
@@ -20,7 +19,6 @@ export default {
   "/watchlist": Watchlist,
   "/preferences": Preferences,
   "/preferences/:activeTab": Preferences,
-  "/preferences/language-select": LanguageSelect,
   "/explore": Explore,
   "/explore/video/:mediaType": ExploreVideo,
   "/explore/video/genres/:mediaType": ExploreVideoGenres,
