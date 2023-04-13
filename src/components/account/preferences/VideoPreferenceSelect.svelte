@@ -14,7 +14,6 @@
   }
   let confButton;
   let allocatedPoints = [];
-  $: console.log(allocatedPoints);
   $: pointsToAllocate = 3 - allocatedPoints.length;
   $: if(allocatedPoints.length === 3) { // enable button when all points have benen allocated
     try {

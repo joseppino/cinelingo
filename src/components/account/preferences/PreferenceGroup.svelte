@@ -51,7 +51,7 @@
         </div>
         <div class="overlay">
           <div class="box">
-            <p class="is-size-4">{numVotes}</p>
+            <p class="vote-count is-size-4">{numVotes}</p>
           </div>
         </div>
       {/if}
@@ -74,6 +74,7 @@
     border: 1px solid #dbdbdb;
     padding: 5px;
     border-radius: 5px;
+    max-width: 400px;
   }
 
   .pref-group-box img {
@@ -101,6 +102,10 @@
     align-items: center;
     width: 50px;
     height: 50px;
+  }
+
+  .vote-count {
+    font-variant-numeric: tabular-nums;
   }
 
   .remove-vote {
