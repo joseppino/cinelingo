@@ -9,7 +9,6 @@
   import checkAuth from "../../scripts/auth/checkAuth";
   import { Modals, openModal, closeModal } from 'svelte-modals';
   import FilterControls from "./FilterControls.svelte";
-  import { onMount } from "svelte";
 
   export let params;
 
@@ -131,7 +130,14 @@
       modalDetails.mediaType = mediaType; // assign media type
       if(imdbId) { // check id is not null
         modalDetails.imdbId = imdbId; // add imdb id property
+        if(modalDetails.overview.length < 1) {
+          const req = `https://fetch-imdb-description1-ic5gbb3a2q-nw.a.run.app?imdbId=${imdbId}`;
+          const imdbDescription = await (await fetch(req)).text();
+          modalDetails.overview = imdbDescription;
+        }
       }
+
+      
       
       if (ukStreamingProviders) {
         modalDetails.ukStreamingProviders = ukStreamingProviders; // if any, add streaming providers to details
@@ -231,7 +237,8 @@
               <li on:click={() => handleCardClick(content)} on:keyup={() => handleCardClick(content)}>
                 <ContentCard props={{
                   content: content,
-                  mediaType: mediaType
+                  mediaType: mediaType,
+                  showDetails: true
                 }} />
               </li>
             {/if}
@@ -239,7 +246,8 @@
             <li on:click={() => handleCardClick(content)} on:keyup={() => handleCardClick(content)}>
               <ContentCard props={{
                 content: content,
-                mediaType: mediaType
+                mediaType: mediaType,
+                showDetails: true
               }} />
             </li>
           {/if}

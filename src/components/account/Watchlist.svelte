@@ -81,6 +81,11 @@
       modalDetails.mediaType = content.mediaType; // assign media type
       if(imdbId) { // check id is not null
         modalDetails.imdbId = imdbId; // add imdb id property
+        if(modalDetails.overview.length < 1) {
+          const req = `https://fetch-imdb-description1-ic5gbb3a2q-nw.a.run.app?imdbId=${imdbId}`;
+          const imdbDescription = await (await fetch(req)).text();
+          modalDetails.overview = imdbDescription;
+        }
       }
       
       if (ukStreamingProviders) {

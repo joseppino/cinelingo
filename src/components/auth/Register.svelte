@@ -1,5 +1,4 @@
 <script>
-  import StatusModal from "./StatusModal.svelte";
   import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
   import { collection, addDoc } from "firebase/firestore";
   import { link, push } from "svelte-spa-router";
@@ -37,7 +36,8 @@
             languagePreference: null,
             watchlist: null,
             liked: null,
-            disliked: null
+            disliked: null,
+            suggestedContent: null
           });
           console.log("Document written with ID: ", docRef.id);
         } catch (e) {

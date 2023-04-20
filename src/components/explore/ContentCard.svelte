@@ -7,6 +7,7 @@
 
   const content = props.content;
   const mediaType = props.mediaType;
+  let showDetails = props.showDetails;
 
 </script>
 
@@ -25,7 +26,9 @@
     </div>
 
     <div class="content">
-      {shortenDescription(content.overview)}
+      {#if showDetails}
+        {shortenDescription(content.overview)}
+      {/if}
       <div class="genres block mt-2">
         {#each content.genres as genre}
           <GenreTag {genre} />

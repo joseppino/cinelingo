@@ -14,7 +14,10 @@
     "#55CBCD",
     "#97C1A9",
     "#D4F0F0",
-    "#FEE1E8"
+    "#FEE1E8",
+    "#A7BED3",
+    "#DAB894",
+    "#F6A6FF"
   ]
   tagColours.sort();
 

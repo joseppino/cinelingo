@@ -1,6 +1,13 @@
 <script>
   import PreferenceGroup from "./PreferenceGroup.svelte";
   import { videoGroupStore } from "../../../stores/videoGroupStore";
+  import { langStore } from "../../../stores/langStore";
+  import toast from "svelte-french-toast";
+  import getUserRef from "../../../scripts/auth/getUserRef";
+  import { authStore } from "../../../stores/authStore";
+  import { doc, getDoc, setDoc } from "firebase/firestore";
+  import { db } from "../../../scripts/fb/firestore";
+  import { push } from "svelte-spa-router";
 
   export let mediaType;
 
@@ -25,10 +32,67 @@
     } catch (e) { console.log(e); }
   }
 
-  function submitPreferences() {
-    // UPDATE USER ACCOUNT PREFS --- FIRESTORE
-    // IF MEDIATYPE === FILM -> COLLECTION1
-    // IF MEDIATYPE === TV -> COLLECTION2
+  // handles user confirming their preferences by updating the database
+  // also triggers generation of some content suggestions for the user
+  async function submitPreferences() {
+    if(!$langStore.languageName) {
+      toast.error("A language preference must be selected before submitting video preferences.");
+      return null;
+    }
+
+    // fetch user's record from DB
+    const userRef = await getUserRef($authStore.email);
+    const userDocSnap = await getDoc(userRef);
+    const userId = userDocSnap.id;
+
+    // select random item from each group for each group id as sample items
+    let sampleTitles = [];
+    for(let i=0; i<allocatedPoints.length; i++) {
+      let videoGroupCollection;
+      if(mediaType === "films") {
+        videoGroupCollection = $videoGroupStore.films;
+      } else {
+        videoGroupCollection = $videoGroupStore.tv;
+      }
+      for(const videoGroup of videoGroupCollection) {
+        if(videoGroup.groupId === allocatedPoints[i]) {
+          let isUnique = false;
+          while (!isUnique) {
+            const randomTitleId = getRandomItem(videoGroup.examples).tmdb_id;
+            if(!sampleTitles.includes(randomTitleId)) {
+              isUnique = true;
+              sampleTitles.push(randomTitleId);
+            }
+          }
+        }
+      }
+    }
+    
+    // write sample titles to video preferences DB collection
+    if(sampleTitles) {
+      setDoc(doc(db, `users/${userId}/videoPreferences`, mediaType), {sampleTitles: [...sampleTitles]})
+        .then(() => {
+          toast.success(
+            `Preferences Updated`,
+            {
+              duration: 2000
+            }
+          );
+          // redirect to homepage after toast is done.
+          setTimeout(() => {
+            push(`/`);
+          }, 2000);
+        });
+    }
+  }
+
+  // gets a random item from an array
+  function getRandomItem(arr) {
+    if(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    } else {
+      throw new Error("Invalid array");
+    }
   }
 </script>
 
@@ -71,19 +135,6 @@
   >Confirm Preferences</button>
 
 <style>
-  .container { 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .row {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
   .confirm-prefs {
     width: 200px;
     margin-bottom: 10px;

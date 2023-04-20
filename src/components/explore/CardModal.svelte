@@ -175,7 +175,7 @@
           <figure class="image modal-poster">
             <img src={`https://image.tmdb.org/t/p/w400/${info.poster_path}`} alt="Poster">
           </figure>
-          <div class="block">
+          <div class="block text-section">
             {#if info.overview}
             <h3 class="subtitle card-subtitle"><strong>Overview</strong></h3>
             <p>{info.overview}</p>
@@ -203,7 +203,7 @@
                 <p>{info.number_of_episodes} {info.number_of_episodes > 1 ? "episodes" : "episode"}</p>
               {/if}
               {#if info.homepage}
-                <p><a href={info.homepage} target="_blank" rel="noreferrer">Homepage</a></p>
+                <p><a href={info.homepage} target="_blank" rel="noreferrer">Info Page</a></p>
               {/if}
               {#if info.imdbId}
                 <p>See more on <a href={`https://www.imdb.com/title/${info.imdbId}`} target="_blank" rel="noreferrer">IMDb</a></p>
@@ -286,7 +286,7 @@
   }
 
   .modal-poster {
-    width: 30%;
+    width: 150px;
     flex-shrink: 0;
     margin-right: 10px;
   }
@@ -299,6 +299,10 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+  }
+
+  .text-section {
+    max-width: 400px;
   }
 
   .info {

@@ -5,6 +5,7 @@
   import { onDestroy } from "svelte";
   import { push } from "svelte-spa-router";
   import { db } from "../../scripts/fb/firestore";
+  import toast from "svelte-french-toast";
 
   let loginForm = {
     "email": "",
@@ -99,13 +100,15 @@
     }
   }
 
-  let showSuccessNotification = false;
-
+  let toasted = false;
   const sub = authStore.subscribe(async (info) => {
     if (info.isLoggedIn) {
       emailInput.readOnly = true;
       passwordInput.readOnly = true;
-      showSuccessNotification = true;
+      if (!toasted){ // check if toast has already been invoked to prevent duplicate
+        toast.success("Login Successful");
+        toasted = true;
+      }
       setTimeout(() => {
         push("/");
       }, 1000);
@@ -120,11 +123,6 @@
 
 
 <div class="container">
-  {#if showSuccessNotification}
-    <div class="notification is-success">
-      <strong>Login Successful!</strong>
-    </div>
-  {/if}
   <div class="box px-6">
     <div class="field">
       <label class="label">Email</label>

@@ -35,7 +35,16 @@
 {#if visible}
 <div class="watchlist-item box" in:fly="{{ y: 200, duration: 2000 }}" out:fade >
   <img src={`https://image.tmdb.org/t/p/w200/${info.poster_path}`} alt="Poster">
-  <p class="subtitle">{title}</p>
+  <p class="subtitle">
+    <span class="icon is-medium">
+      {#if info.mediaType === "tv"}
+        <i class="fa-solid fa-tv"></i>
+      {:else}
+        <i class="fa-solid fa-film"></i>
+      {/if}
+    </span>
+    <span>{title}</span>
+  </p>
   <div class="remove-item" on:click|stopPropagation={removeItem} on:keyup={removeItem}>
     <span class="icon">
       <i class="fa-regular fa-trash-can"></i>

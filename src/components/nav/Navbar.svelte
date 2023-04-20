@@ -19,7 +19,7 @@
 
     <!-- svelte-ignore a11y-missing-attribute -->
     <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" 
-    data-target="navbarMenu"
+    data-target="navbarMenu" tabindex="0"
     use:clickOutside
     bind:this={navBurger} 
     on:click={() => {
@@ -29,7 +29,13 @@
         $target.classList.toggle('is-active');
       }
     }
-    on:keyup={() => navBurger.classList.toggle("is-active")}
+    on:keyup={() => {
+        const target = navBurger.dataset.target;
+        const $target = document.getElementById(target);
+        navBurger.classList.toggle("is-active");
+        $target.classList.toggle('is-active');
+      }
+    }
     on:click_outside={() => {
         const target = navBurger.dataset.target;
         const $target = document.getElementById(target);
@@ -59,9 +65,9 @@
         <a href="/explore/video/tv" use:link class="navbar-item">
           Television
         </a>
-        <a href="/explore/music" use:link class="navbar-item">
+        <!-- <a href="/explore/music" use:link class="navbar-item">
           Music
-        </a>
+        </a> -->
       </div>
     </div>
     </div>
@@ -85,9 +91,6 @@
           <a href="/watchlist" class="navbar-item" use:link>
             Watchlist
           </a>
-          <a href="#" class="navbar-item">
-            Profile
-          </a>
           <a href="/preferences" class="navbar-item" use:link>
             Preferences
           </a>
@@ -110,10 +113,9 @@
 <style>
   .navbar {
     border-bottom: none;
-    /* background-color: #5AA9E6; */
     background-color: #a39dc1;
     color: #000000;
-    box-shadow: 0px 0px 6px 1px #000000;
+    box-shadow: 0px 0px 3px 1px #000000;
   }
 
   a {

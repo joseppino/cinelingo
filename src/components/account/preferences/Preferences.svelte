@@ -3,8 +3,12 @@
   import LanguageSelect from "./LanguageSelect.svelte";
   import { onMount } from "svelte";
   import VideoPreferenceSelect from "./VideoPreferenceSelect.svelte";
+  import checkAuth from "../../../scripts/auth/checkAuth";
 
   export let params = {};
+
+  checkAuth();
+
   let activeTab = "language-select";
   if(params) {
     if (params.activeTab) {
