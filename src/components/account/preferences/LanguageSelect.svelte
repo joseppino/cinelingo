@@ -2,12 +2,14 @@
   import { authStore } from "../../../stores/authStore";
   import { langStore } from "../../../stores/langStore";
   import checkAuth from "../../../scripts/auth/checkAuth";
-  import { updateDoc } from "firebase/firestore";
+  import { getDoc, updateDoc } from "firebase/firestore";
   import getUserRef from "../../../scripts/auth/getUserRef";
   import getLanguages from "../../../scripts/getLanguages";
   import { fly } from "svelte/transition";
   import toast from "svelte-french-toast";
   import capitaliseFirstLetter from "../../../scripts/capitaliseFirstLetter";
+  import debounce from "../../../scripts/debounce";
+  import requestSuggestionsUpdate from "../../../scripts/requestSuggestionsUpdate";
 
   checkAuth();
   
@@ -38,6 +40,14 @@
       // update firestore DB with new preferred language
       await updateDoc(userRef, {
         languagePreference: data.languageName
+      });
+      // debounce user input to minimise resource wastage
+      debounce(async () => {
+        const userDocSnap = await getDoc(userRef);
+        const userId = userDocSnap.id;
+        requestSuggestionsUpdate("movie", userId, $langStore.locale.toLowerCase())
+          .then(() => requestSuggestionsUpdate("tv", userId, $langStore.locale.toLowerCase()))
+          .then(() => console.log("Recommendation updates requested"))
       });
     } catch (e) {
       console.log(e);

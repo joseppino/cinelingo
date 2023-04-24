@@ -8,6 +8,7 @@
   import { doc, getDoc, setDoc } from "firebase/firestore";
   import { db } from "../../../scripts/fb/firestore";
   import { push } from "svelte-spa-router";
+  import requestSuggestionsUpdate from "../../../scripts/requestSuggestionsUpdate";
 
   export let mediaType;
 
@@ -72,6 +73,10 @@
     if(sampleTitles) {
       setDoc(doc(db, `users/${userId}/videoPreferences`, mediaType), {sampleTitles: [...sampleTitles]})
         .then(() => {
+          let mRef = "";
+          mediaType === "films" ? mRef = "movie" : mRef = "tv";
+          requestSuggestionsUpdate(mRef, userId, $langStore.locale.toLowerCase())
+            .then(() => console.log("Requested updated recommendations"));
           toast.success(
             `Preferences Updated`,
             {

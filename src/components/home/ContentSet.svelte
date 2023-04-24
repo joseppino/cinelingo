@@ -1,7 +1,6 @@
 <script>
   import { Modals, closeModal, openModal } from "svelte-modals";
   import tmdbApikey from "../../credentials/tmdbApikey";
-  import ContentCard from "../explore/ContentCard.svelte";
   import { query, orderBy, limit, getDoc, collection, getDocs } from "firebase/firestore";
   import { db } from "../../scripts/fb/firestore";
   import getUserRef from "../../scripts/auth/getUserRef";
