@@ -30,7 +30,7 @@
         {shortenDescription(content.overview)}
       {/if}
       <div class="genres block mt-2">
-        {#each content.genres as genre}
+        {#each content.genreObjs as genre}
           <GenreTag {genre} />
         {/each}
       </div>

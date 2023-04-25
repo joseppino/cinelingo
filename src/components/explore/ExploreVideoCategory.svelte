@@ -1,6 +1,6 @@
 <script>
   import { db } from "../../scripts/fb/firestore";
-  import { collection, getDocs } from "firebase/firestore";
+  import { collection, getDoc, getDocs } from "firebase/firestore";
   import { langStore } from "../../stores/langStore";
   import capitaliseFirstLetter from "../../scripts/capitaliseFirstLetter";
   import ContentCard from "./ContentCard.svelte";
@@ -9,6 +9,8 @@
   import checkAuth from "../../scripts/auth/checkAuth";
   import { Modals, openModal, closeModal } from 'svelte-modals';
   import FilterControls from "./FilterControls.svelte";
+  import getUserRef from "../../scripts/auth/getUserRef";
+  import { authStore } from "../../stores/authStore";
 
   export let params;
 
@@ -70,21 +72,40 @@
 
   // fetches media from firestoreDB based on the locale and genre.
   async function loadMedia() {
-    const querySnapshot = await getDocs(collection(db, `${dbMediaRef}/${category}/${$langStore.locale}`));
+    let colRef;
+    if(category === "recommended") {
+      // fetch user's record from DB
+      const userRef = await getUserRef($authStore.email);
+      const userDocSnap = await getDoc(userRef);
+      const userId = userDocSnap.id;
+      colRef = collection(db, `suggestedContent/${userId}/${mediaType}`);
+    } else {
+      colRef = collection(db, `${dbMediaRef}/${category}/${$langStore.locale}`) 
+    }
+    const querySnapshot = await getDocs(colRef);
     const genres = await getGenres();
     let media = [];
     querySnapshot.forEach(doc => { // iterate through firestore movie collection
       const content = {...doc.data()}
-      content.genres = [];
-      for (const id of content.genre_ids) {
-        for (const genre of genres) {
-          if (genre.id === id) { // check for matching genre ids
-            content.genres.push({id: genre.id, name: genre.name});
-          }
+      content.genreObjs = [];
+      if(category === "recommended") {
+        for(const genre of content.genres) {
+          content.genreObjs.push({id: genre.id, name: genre.name});
+        }
+      } else {
+          for (const id of content.genre_ids) {
+            for (const genre of genres) {
+              if (genre.id === id) { // check for matching genre ids
+                content.genreObjs.push({id: genre.id, name: genre.name});
+              }
+            }
         }
       }
+
       media.push(content);
-    });
+
+      });
+
     return media;
   }
 
@@ -223,9 +244,12 @@
           Browsing {categoryTitle} {mediaName}
         {/if}
       </h1>
-      <div class="controls">
-        <FilterControls props={{mediaType: mediaType}} bind:selectedGenres={selectedGenres} bind:sortBy={sortBy}/>
-      </div>
+      <!-- Remove controls if on recommended page due to broken functionality -->
+      {#if category !== "recommended" }
+        <div class="controls">
+          <FilterControls props={{mediaType: mediaType}} bind:selectedGenres={selectedGenres} bind:sortBy={sortBy}/>
+        </div>
+      {/if}
     </div>
     <div class="wrap">
       <ul>
