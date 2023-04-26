@@ -1,7 +1,7 @@
 <script>
   import { deleteDoc, collection, getDoc, getDocs, setDoc, doc } from "firebase/firestore";
   import { onMount } from "svelte";
-  import { Modals, closeModal, openModal } from "svelte-modals";
+  import { closeModal } from "svelte-modals";
   import getUserRef from "../../scripts/auth/getUserRef";
   import { db } from "../../scripts/fb/firestore";
   import { authStore } from "../../stores/authStore";
