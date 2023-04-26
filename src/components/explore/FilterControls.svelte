@@ -2,6 +2,7 @@
   import { onDestroy, onMount } from "svelte";
   import tmdbApikey from "../../credentials/tmdbApikey";
   import capitaliseFirstLetter from "../../scripts/capitaliseFirstLetter";
+  import { fetchGenres } from "../../scripts/tmdbScripts";
 
   export let props;
   export let selectedGenres = [];
@@ -29,18 +30,7 @@
     dbMediaRef = "movies";
   }
 
-  let genreList = getGenres();
-
-  async function getGenres() { // get list of genres from tmdb api for given media type
-    try {
-      const req = `https://api.themoviedb.org/3/genre/${apiMediaRef}/list?api_key=${tmdbApikey}&language=en-US`;
-      const res = await fetch(req); 
-      const obj = await res.json();
-      return obj.genres;
-    } catch (e) {
-      console.log("Error fetching genre list");
-    }
-  }
+  let genreList = fetchGenres(apiMediaRef);
 
   onDestroy(() => { 
     selectedGenres = [];

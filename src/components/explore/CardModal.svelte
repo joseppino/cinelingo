@@ -1,11 +1,12 @@
 <script>
   import { deleteDoc, collection, getDoc, getDocs, setDoc, doc } from "firebase/firestore";
   import { onMount } from "svelte";
-  import { closeModal } from "svelte-modals";
+  import { Modals, closeModal, openModal } from "svelte-modals";
   import getUserRef from "../../scripts/auth/getUserRef";
   import { db } from "../../scripts/fb/firestore";
   import { authStore } from "../../stores/authStore";
   import GenreTag from "./GenreTag.svelte";
+  import TrailerPopup from "./TrailerPopup.svelte";
 
   // declare props
   export let isOpen;
@@ -17,6 +18,8 @@
   let onWatchlist = false;
   let isLiked = false;
   let isDisliked = false;
+
+  let showTrailer = false;
 
   const checkButtonStates = async() => {
     try {
@@ -126,7 +129,7 @@
         addToLikedOrDisliked(userId, "liked");
       }
     } catch(e) {
-      console.log(e);
+      console.error(e);
     }
   }
 
@@ -148,7 +151,7 @@
         addToLikedOrDisliked(userId, "disliked");
       }
     } catch(e) {
-      console.log(e);
+      console.error(e);
     }
   }
 
@@ -156,8 +159,18 @@
 
 </script>
 
+<!-- <Modals>
+  <div
+    slot="backdrop"
+    class="backdrop"
+    on:click={closeModal}
+    on:keyup={closeModal}
+  />
+</Modals> -->
+
 {#if isOpen}
   <div role="dialog" class="modal is-active">
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="modal-background" on:click={closeModal}></div>
     <div class="modal-card">
       <header class="modal-card-head">
@@ -165,15 +178,18 @@
         <button class="delete" aria-label="close" on:click={closeModal}></button>
       </header>
       <section class="modal-card-body">
-        <!-- <section class="trailer-embed">
-          <iframe width="560" height="315" src="https://www.youtube.com/embed/PuTe6i8A3Ug" 
-            title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write;
-            encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
-          </iframe>
-        </section> -->
         <section class="overview block">
           <figure class="image modal-poster">
             <img src={`https://image.tmdb.org/t/p/w400/${info.poster_path}`} alt="Poster">
+            {#if info.trailerKey}
+              <p class="overlay">
+                <button class="button is-ghost" on:click={() => showTrailer = true}>
+                  <span class="icon is-large">
+                    <i class="fas fa-2x fa-solid fa-play"></i>
+                  </span>
+                </button>
+              </p>
+            {/if}
           </figure>
           <div class="block text-section">
             {#if info.overview}
@@ -279,10 +295,13 @@
     </div>
   </div>
 {/if}
+{#if showTrailer}
+  <TrailerPopup trailerKey={info.trailerKey} bind:showTrailer={showTrailer}/>
+{/if}
 
 <style>
   .modal-background {
-    background-color: rgba(10,10,10,0.8);
+    background-color: rgba(10, 10, 10, 0.6);
   }
 
   .modal-poster {
@@ -293,6 +312,22 @@
 
   .card-subtitle {
     margin-bottom: 1rem !important;
+  }
+
+  .image {
+    position: relative;
+  }
+
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width:100%;    
+    height:100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
   }
 
   .overview {
@@ -343,5 +378,4 @@
   .modal-card-foot {
     justify-content: space-around;
   }
-  
 </style>

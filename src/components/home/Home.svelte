@@ -65,7 +65,7 @@
             <span class="icon is-medium">
               <i class="fa-regular fa-lightbulb"></i>
             </span>
-            <span>Today's Recommended Entertainment</span>
+            <span>Top Picks for you...</span>
           </h1>
           <div class="block box cset">
             <h2 class="subtitle">

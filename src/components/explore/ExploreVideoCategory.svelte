@@ -11,6 +11,7 @@
   import FilterControls from "./FilterControls.svelte";
   import getUserRef from "../../scripts/auth/getUserRef";
   import { authStore } from "../../stores/authStore";
+  import { fetchGenres, fetchStreamingProviders, fetchTrailerKey } from "../../scripts/tmdbScripts";
 
   export let params;
 
@@ -58,18 +59,6 @@
       break;
   }
 
-  // fetches list of genres from TMDB API for the given media type.
-  async function getGenres() {
-    try {
-      const req = `https://api.themoviedb.org/3/genre/${apiMediaRef}/list?api_key=${tmdbApikey}&language=en-US`;
-      const res = await fetch(req);
-      const obj = await res.json();
-      return obj.genres;
-    } catch (e) {
-      console.log("Error fetching genre list");
-    }
-  }
-
   // fetches media from firestoreDB based on the locale and genre.
   async function loadMedia() {
     let colRef;
@@ -83,7 +72,7 @@
       colRef = collection(db, `${dbMediaRef}/${category}/${$langStore.locale}`) 
     }
     const querySnapshot = await getDocs(colRef);
-    const genres = await getGenres();
+    const genres = await fetchGenres(apiMediaRef);
     let media = [];
     querySnapshot.forEach(doc => { // iterate through firestore movie collection
       const content = {...doc.data()}
@@ -109,29 +98,6 @@
     return media;
   }
 
-  // fetches list of services currently streaming the requested content
-  async function getStreamingProviders(contentType, contentId) {
-    try {
-      const req = `https://api.themoviedb.org/3/${contentType}/${contentId}}/watch/providers?api_key=${tmdbApikey}`;
-      const res = await fetch(req);
-      const data = await res.json();
-      let ukStreamingProviders;
-      if(data.results.GB) { // check content has providers for the GB region
-        data.results.GB.flatrate ? ukStreamingProviders = data.results.GB.flatrate : ukStreamingProviders = []; // flatrate refers to streaming providers as opposed to renting/purchasing providers.
-      }
-      if(ukStreamingProviders) { // check emptiness
-        const providerBlacklist = [175, 1796, 596];
-        ukStreamingProviders = ukStreamingProviders.filter(provider => !providerBlacklist.includes(provider.provider_id)); // filter out Netflix basic & Netflix kids
-        if (ukStreamingProviders.length > 3) {
-          ukStreamingProviders.length = 3; // truncate list of providers if too long
-        }
-      }
-      return ukStreamingProviders;
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
   // fetches additional data about selected content when its card is clicked, triggers modal popup to display information.
   async function handleCardClick(content) {
     try {
@@ -144,7 +110,7 @@
       const imdbIdRes = await (await fetch(imdbIdReq)).json();
       const imdbId = imdbIdRes.imdb_id;
 
-      const ukStreamingProviders = await getStreamingProviders(apiMediaRef, content.id);
+      const ukStreamingProviders = await fetchStreamingProviders(apiMediaRef, content.id);
       
       console.log(details);
       modalDetails = details;
@@ -157,8 +123,6 @@
           modalDetails.overview = imdbDescription;
         }
       }
-
-      
       
       if (ukStreamingProviders) {
         modalDetails.ukStreamingProviders = ukStreamingProviders; // if any, add streaming providers to details
@@ -166,12 +130,20 @@
         modalDetails.ukStreamingProviders = [];
       }
 
+      const trailerKey = await fetchTrailerKey(apiMediaRef, content.id);
+      if(trailerKey) {
+        modalDetails.trailerKey = trailerKey;
+      } else {
+        modalDetails.trailerKey = null;
+      }
+
       console.log(modalDetails);
+      // @ts-ignore
       openModal(() => import("./CardModal.svelte"), {
         info: modalDetails
       });
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } 
   }
 

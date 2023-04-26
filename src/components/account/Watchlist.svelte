@@ -7,6 +7,7 @@
   import { Modals, openModal, closeModal } from 'svelte-modals';
   import tmdbApikey from "../../credentials/tmdbApikey";
   import checkAuth from "../../scripts/auth/checkAuth";
+  import { fetchStreamingProviders, fetchTrailerKey } from "../../scripts/tmdbScripts";
 
   checkAuth();
 
@@ -26,29 +27,6 @@
       });
       console.log(wl);
       return wl;
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  // fetches list of services currently streaming the requested content
-  async function getStreamingProviders(contentType, contentId) {
-    try {
-      const req = `https://api.themoviedb.org/3/${contentType}/${contentId}}/watch/providers?api_key=${tmdbApikey}`;
-      const res = await fetch(req);
-      const data = await res.json();
-      let ukStreamingProviders;
-      if(data.results.GB) { // check content has providers for the GB region
-        data.results.GB.flatrate ? ukStreamingProviders = data.results.GB.flatrate : ukStreamingProviders = []; // flatrate refers to streaming providers as opposed to renting/purchasing providers.
-      }
-      if(ukStreamingProviders) { // check emptiness
-        const providerBlacklist = [175, 1796, 596];
-        ukStreamingProviders = ukStreamingProviders.filter(provider => !providerBlacklist.includes(provider.provider_id)); // filter out Netflix basic & Netflix kids
-        if (ukStreamingProviders.length > 3) {
-          ukStreamingProviders.length = 3; // truncate list of providers if too long
-        }
-      }
-      return ukStreamingProviders;
     } catch (e) {
       console.log(e);
     }
@@ -74,7 +52,7 @@
       const imdbIdRes = await (await fetch(imdbIdReq)).json();
       const imdbId = imdbIdRes.imdb_id;
 
-      const ukStreamingProviders = await getStreamingProviders(apiMediaRef, content.id);
+      const ukStreamingProviders = await fetchStreamingProviders(apiMediaRef, content.id);
       
       console.log(details);
       modalDetails = details;
@@ -92,6 +70,13 @@
         modalDetails.ukStreamingProviders = ukStreamingProviders; // if any, add streaming providers to details
       } else {
         modalDetails.ukStreamingProviders = [];
+      }
+
+      const trailerKey = await fetchTrailerKey(apiMediaRef, content.id);
+      if(trailerKey) {
+        modalDetails.trailerKey = trailerKey;
+      } else {
+        modalDetails.trailerKey = null;
       }
 
       console.log(modalDetails);
