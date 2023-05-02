@@ -26,8 +26,8 @@
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log(errorCode);
-        console.log(errorMessage);
+        console.error(errorCode);
+        console.error(errorMessage);
         emailInput.classList.add("is-danger");
         emailInput.classList.remove("is-success");
         passwordInput.classList.add("is-danger");
@@ -38,21 +38,35 @@
 
   async function loginWithGoogle() {
     try {
+      // using the Firebase Google Auth library
       const provider = new GoogleAuthProvider();
+      // open the Google sign-in popup
       const result = await signInWithPopup(auth, provider);
+      // check if user has signed in before
       const usersRef = collection(db, "users");
       const q = query(usersRef, where("email", "==", result.user.email));
       const querySnapshot = await getDocs(q);
-      if(querySnapshot.empty) { // check that gmail address is not already registered 
+      if(querySnapshot.empty) { // if the gmail address is not registered
         try {
+          // add the new entry into Firestore DB
           const docRef = await addDoc(collection(db, "users"), {
             email: result.user.email,
             username: result.user.displayName,
-            languagePreference: null
+            languagePreference: null,
+            watchlist: null,
+            liked: null,
+            disliked: null,
+            suggestedContent: null
           });
           console.log("Document written with ID: ", docRef.id);
         } catch (e) {
-          console.log("Error adding document: ", e);
+          // console.error("Error adding document: ", e);
+          toast.error(
+            "Google Sign-In Failed",
+            {
+              duration: 3000
+            }
+          );
         }
       }
       validateLogin();

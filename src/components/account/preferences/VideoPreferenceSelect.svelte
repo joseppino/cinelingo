@@ -85,7 +85,7 @@
           );
           // redirect to homepage after toast is done.
           setTimeout(() => {
-            push(`/`);
+            push("/");
           }, 2000);
         });
     }

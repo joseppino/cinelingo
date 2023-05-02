@@ -38,25 +38,25 @@
   <label for="pref-group-box">{groupName}</label>
   <div id="pref-group-box" class="pref-group-box"
   on:click={addVote}
-  on:keyup={addVote}
+  on:keypress={addVote}
   >
     {#if showOverlay}
-        <div class="remove-vote"
-        on:click|stopPropagation={removeVote}
-        on:keyup|stopPropagation={removeVote}
-        >
-          <span class="icon">
-            <i class="fa-solid fa-xmark"></i>
-          </span>
+      <div class="remove-vote" role="button" tabindex="0"
+      on:click|stopPropagation={removeVote}
+      on:keypress|stopPropagation={removeVote}
+      >
+        <span class="icon">
+          <i class="fa-solid fa-xmark"></i>
+        </span>
+      </div>
+      <div class="overlay">
+        <div class="box">
+          <p class="vote-count is-size-4">{numVotes}</p>
         </div>
-        <div class="overlay">
-          <div class="box">
-            <p class="vote-count is-size-4">{numVotes}</p>
-          </div>
-        </div>
-      {/if}
+      </div>
+    {/if}
     {#each contentList as content}
-      <img src={`https://image.tmdb.org/t/p/w300/${content.poster_path}`} alt={content.title}>
+      <img src={`https://image.tmdb.org/t/p/w300/${content.poster_path}`} alt={`Poster for: ${content.title}`}>
     {/each}
   </div>
 </div>

@@ -1,9 +1,8 @@
 <script>
   import { onMount } from "svelte";
 
-
   export let genre;
-
+  let tag;
   const tagColours = [
     "#ABDEE6",
     "#CBAACB",
@@ -25,9 +24,7 @@
   function hashIdToTagIndex(id) {
     return id % (tagColours.length - 1);
   }
-
-  let tag;
-
+  
   onMount(() => {
     tag.style.backgroundColor = tagColours[hashIdToTagIndex(genre.id)];
   })

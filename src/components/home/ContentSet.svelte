@@ -119,7 +119,7 @@
     slot="backdrop"
     class="backdrop"
     on:click={closeModal}
-    on:keyup={closeModal}
+    on:keypress={closeModal}
   />
 </Modals>
 
@@ -129,18 +129,20 @@
     <p>Fetching content...</p>
   {:then contentSet}
     {#if contentSet.length}
-    <ul>
-      {#each contentSet as content}
-        <li on:click={() => handleCardClick(content)} on:keyup={() => handleCardClick(content)}>
-          <img class="poster" src={`https://image.tmdb.org/t/p/w300/${content.poster_path}`} alt="Poster">
-          <!-- <ContentCard props={{
-            content: content,
-            mediaType: mediaType,
-            showDetails: false
-          }} /> -->
-        </li>
-      {/each}
-    </ul>
+      <ul>
+        {#each contentSet as content}
+          <li on:click={() => handleCardClick(content)} 
+            on:keypress={() => handleCardClick(content)}>
+            <div role="button" tabindex="0">
+              {#if mediaType === "films"}
+                <img class="poster" src={`https://image.tmdb.org/t/p/w300/${content.poster_path}`} alt={`Poster for the film, ${content.title}`}>
+              {:else}
+                <img class="poster" src={`https://image.tmdb.org/t/p/w300/${content.poster_path}`} alt={`Poster for the TV show, ${content.name}`}>
+              {/if}
+            </div>
+          </li>
+        {/each}
+      </ul>
     {:else}
       <h2 class="subtitle">No recommendations yet!</h2>
     {/if}

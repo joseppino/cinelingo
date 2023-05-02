@@ -77,7 +77,7 @@
     {:then languages}
       {#each languages as lang}   
         <div class="column col">
-          <div class="card is-clickable" in:fly="{{ y: 200, duration: 2000 }}"
+          <div class="card is-clickable" in:fly="{{ y: 200, duration: 2000 }}" role="button" tabindex="0"
             on:click={(e) => {
                 if (lang[0] !== $langStore.languageName) { // check not already set to that language
                   handleCardClick(e);
@@ -93,9 +93,9 @@
               cardClicked = true;
               langStore.set({languageName: lang[0], locale: lang[1].reference, flag: lang[1].flag})}
              }>
-            <div class="card-image">
-              <img src={lang[1].imgURI} alt={lang[1].name + " flag"}>
-            </div>
+            <!-- <div class="card-image"> -->
+              <img class="img-card" src={lang[1].imgURI} alt={lang[1].name + " flag"}>
+            <!-- </div> -->
             <div class="card-footer pt-1 cf">
               <p class="subtitle sbt">
                 <span>{lang[1].name}</span>
@@ -120,7 +120,7 @@
     box-shadow: 0 .5em 1em -.125em rgba(10,10,10,.7),0 0 0 1px rgba(10,10,10,.02);
   }
 
-  .card-image {
+  .img-card {
     pointer-events: none;
     padding: 3px;
   }

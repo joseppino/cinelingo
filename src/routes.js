@@ -16,7 +16,7 @@ export default {
   "/register": Register,
   "/watchlist": Watchlist,
   "/preferences": Preferences,
-  "/preferences/:activeTab": Preferences,
+  "/preferences/:activeTab": Preferences, // :activeTab parameter acts as a component prop
   "/explore": Explore,
   "/explore/video/:mediaType": ExploreVideo,
   "/explore/video/:mediaType/:category": ExploreVideoCategory,

@@ -18,16 +18,18 @@
   let message = "";
 
   async function handleRegistration() {
+    // validate the form before submission
     const validation = validateForm(regForm);
     if (validation.valid) {
       try {
+        // Create Firebase Auth user record
         const userCredential = await createUserWithEmailAndPassword(auth, regForm.email, regForm.password)
-        // Signed in
         const user = userCredential.user;
         // add the user's chosen username
         await updateProfile(user, {
           displayName: (regForm.username)
         });
+        // communicate success to user
         toast.success("Registration Successful");
         try {
           const docRef = await addDoc(collection(db, "users"), {
@@ -41,12 +43,12 @@
           });
           console.log("Document written with ID: ", docRef.id);
         } catch (e) {
-          console.log("Error adding document: ", e);
+          console.error("Error adding document: ", e);
         }
       } catch(error) {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
+        console.error(errorCode, errorMessage);
         message = errorMessage;
         toast.error(
           `Registration Failed \n\n ${translateFirebaseErrorCode(errorCode)}.`,
@@ -69,7 +71,6 @@
     setTimeout(() => { // redirect to language select after 2 seconds
       push("/preferences/language-select");
     }, 2000);
-    
   }
 
   // translates a firebase error code to a user-legible error message

@@ -85,7 +85,7 @@
         showWatchlistBtn: false
       });
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } 
   }
 </script>
@@ -96,7 +96,7 @@
     slot="backdrop"
     class="backdrop"
     on:click={closeModal}
-    on:keyup={closeModal}
+    on:keypress={closeModal}
   />
 </Modals>
 
@@ -107,7 +107,9 @@
     <h4 class="title">My Watchlist</h4>
     <ul>
       {#each watchlist as watchlistItem}
-        <li on:click={() => handleItemClick(watchlistItem)} on:keyup={() => handleItemClick(watchlistItem)}>
+        <li on:click={() => handleItemClick(watchlistItem)} 
+          on:keypress={() => handleItemClick(watchlistItem)}
+        >
           <WatchlistItem info={{...watchlistItem}} />
         </li>
       {:else}

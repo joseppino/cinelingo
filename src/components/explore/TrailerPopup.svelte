@@ -5,12 +5,12 @@
 
 <div id="trailer-overlay" class="trailer-overlay" 
   on:click={() => showTrailer = false}
-  on:keyup={() => showTrailer = false}>
+  on:keypress={() => showTrailer = false}>
   <div id="video-container" class="video-container">
     <iframe src={`https://www.youtube-nocookie.com/embed/${trailerKey}`} title="Trailer Video" frameborder="0" allowfullscreen></iframe>
     <div id="close-button" class="close-button" 
     on:click={() => showTrailer = false}
-    on:keyup={() => showTrailer = false}>
+    on:keypress={() => showTrailer = false}>
       <span class="icon">
         <i class="fa-solid fa-xmark"></i>
       </span>

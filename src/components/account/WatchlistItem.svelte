@@ -33,8 +33,12 @@
 </script>
 
 {#if visible}
-<div class="watchlist-item box" in:fly="{{ y: 200, duration: 2000 }}" out:fade >
-  <img src={`https://image.tmdb.org/t/p/w200/${info.poster_path}`} alt="Poster">
+<div class="watchlist-item box" in:fly="{{ y: 200, duration: 2000 }}" out:fade role="button" tabindex="0">
+  {#if info.mediaType === "tv"}
+    <img src={`https://image.tmdb.org/t/p/w200/${info.poster_path}`} alt={`Poster for the TV show, ${title}`}>
+  {:else}
+    <img src={`https://image.tmdb.org/t/p/w200/${info.poster_path}`} alt={`Poster for the film, ${title}`}>
+  {/if}
   <p class="subtitle">
     <span class="icon is-medium">
       {#if info.mediaType === "tv"}
@@ -45,7 +49,11 @@
     </span>
     <span>{title}</span>
   </p>
-  <div class="remove-item" on:click|stopPropagation={removeItem} on:keyup={removeItem}>
+  <div class="remove-item"
+  on:click|stopPropagation={removeItem}
+  on:keypress={removeItem}
+  role="button"
+  tabindex="0">
     <span class="icon">
       <i class="fa-regular fa-trash-can"></i>
     </span>

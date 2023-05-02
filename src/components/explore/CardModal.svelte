@@ -164,7 +164,7 @@
     slot="backdrop"
     class="backdrop"
     on:click={closeModal}
-    on:keyup={closeModal}
+    on:keypress={closeModal}
   />
 </Modals> -->
 
@@ -180,15 +180,20 @@
       <section class="modal-card-body">
         <section class="overview block">
           <figure class="image modal-poster">
-            <img src={`https://image.tmdb.org/t/p/w400/${info.poster_path}`} alt="Poster">
+            {#if info.mediaType === "films"}
+              <img src={`https://image.tmdb.org/t/p/w400/${info.poster_path}`} alt={`Poster for the film, ${info.title}`}>
+            {:else}
+              <img src={`https://image.tmdb.org/t/p/w400/${info.poster_path}`} alt={`Poster for the TV show, ${info.name}`}>
+            {/if}
             {#if info.trailerKey}
-              <p class="overlay">
+              <caption>
+                <span>Play Trailer</span>
                 <button class="button is-ghost" on:click={() => showTrailer = true}>
                   <span class="icon is-large">
                     <i class="fas fa-2x fa-solid fa-play"></i>
                   </span>
                 </button>
-              </p>
+              </caption>
             {/if}
           </figure>
           <div class="block text-section">
@@ -234,7 +239,7 @@
                 <div class="provider-list">
                   {#each info.ukStreamingProviders as provider}
                       <img on:click={() => open(`https://duckduckgo.com/?q=${provider.provider_name}%20streaming&kp=-1&kl=us-en`)}
-                      on:keyup={() => open(`https://duckduckgo.com/?q=${provider.provider_name}%20streaming&kp=-1&kl=us-en`)}
+                      on:keypress={() => open(`https://duckduckgo.com/?q=${provider.provider_name}%20streaming&kp=-1&kl=us-en`)}
                       class="provider-logo" 
                       width="50px" height="50px" 
                       src={`https://image.tmdb.org/t/p/w200/${provider.logo_path}`} 
@@ -301,7 +306,7 @@
 
 <style>
   .modal-background {
-    background-color: rgba(10, 10, 10, 0.6);
+    background-color: rgba(10, 10, 10, 0.3);
   }
 
   .modal-poster {
@@ -318,15 +323,11 @@
     position: relative;
   }
 
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width:100%;    
-    height:100%;
+  caption {
+    width: 100%;
     display: flex;
+    flex-direction: row;
     justify-content: center;
-    flex-direction: column;
     align-items: center;
   }
 

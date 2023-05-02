@@ -23,19 +23,24 @@ export async function fetchStreamingProviders(contentType, contentId) {
     const res = await fetch(req);
     const data = await res.json();
     let ukStreamingProviders;
-    if(data.results.GB) { // check content has providers for the GB region
-      data.results.GB.flatrate ? ukStreamingProviders = data.results.GB.flatrate : ukStreamingProviders = []; // flatrate refers to streaming providers as opposed to renting/purchasing providers.
+    // check content has streaming providers for the GB region
+    if(data.results.GB) {
+      // flatrate refers to streaming providers as opposed to renting/purchasing providers.
+      data.results.GB.flatrate ? ukStreamingProviders = data.results.GB.flatrate : ukStreamingProviders = []; 
     }
-    if(ukStreamingProviders) { // check emptiness
+    // check truthiness
+    if(ukStreamingProviders) { 
       const providerBlacklist = [175, 1796, 596];
-      ukStreamingProviders = ukStreamingProviders.filter(provider => !providerBlacklist.includes(provider.provider_id)); // filter out unwanted providers
+      // filter out unwanted providers
+      ukStreamingProviders = ukStreamingProviders.filter(provider => !providerBlacklist.includes(provider.provider_id)); 
       if (ukStreamingProviders.length > 3) {
-        ukStreamingProviders.length = 3; // truncate list of providers if too long
+        // truncate list of providers if too long
+        ukStreamingProviders.length = 3; 
       }
     }
     return ukStreamingProviders;
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 }
 
@@ -47,6 +52,6 @@ export async function fetchGenres(apiMediaRef) {
     const obj = await res.json();
     return obj.genres;
   } catch (e) {
-    console.log("Error fetching genre list");
+    console.error("Error fetching genre list");
   }
 }

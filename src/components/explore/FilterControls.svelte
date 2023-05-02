@@ -57,12 +57,7 @@
       <div class="dropdown-menu" id="dropdown-menu" role="menu">
         <div class="dropdown-content genre-select">
           {#each genreList as genre}
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <!-- <a class="dropdown-item" on:click={() => console.log(genre.name)}>
-              {genre.name}
-            </a> -->
             <label class="checkbox is-size-6">
-              <!-- <input type="checkbox" bind:group={selectedGenres} value={JSON.stringify({genre_id: genre.id, genre_name: genre.name})}> -->
               <input type="checkbox" bind:group={selectedGenres} value={genre.id}>
               <span>{genre.name}</span>
             </label>
@@ -91,17 +86,17 @@
           <!-- svelte-ignore a11y-missing-attribute -->
           <a class="dropdown-item" 
           on:click={() => sortBy = "popularity"}
-          on:keyup={() => sortBy = "popularity"}
+          on:keypress={() => sortBy = "popularity"}
           >Popularity </a>
           <!-- svelte-ignore a11y-missing-attribute -->
           <a class="dropdown-item"
           on:click={() => sortBy = "rating"}
-          on:keyup={() => sortBy = "rating"}
+          on:keypress={() => sortBy = "rating"}
           >Rating </a>
           <!-- svelte-ignore a11y-missing-attribute -->
           <a class="dropdown-item"
           on:click={() => sortBy = "alphabetical"}
-          on:keyup={() => sortBy = "alphabetical"}
+          on:keypress={() => sortBy = "alphabetical"}
           >Alphabetical (A-Z)</a>
         </div>
       </div>

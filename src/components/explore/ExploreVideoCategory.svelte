@@ -200,7 +200,7 @@
     slot="backdrop"
     class="backdrop"
     on:click={closeModal}
-    on:keyup={closeModal}
+    on:keypress={closeModal}
   />
 </Modals>
 
@@ -230,7 +230,9 @@
           {#if genreFilter.length}
             <!-- Show only content that matches all filters -->
             {#if checkArrayIsSubset(content.genre_ids, genreFilter)}
-              <li on:click={() => handleCardClick(content)} on:keyup={() => handleCardClick(content)}>
+              <li on:click={() => handleCardClick(content)} 
+                  on:keypress={() => handleCardClick(content)}
+                >
                 <ContentCard props={{
                   content: content,
                   mediaType: mediaType,
@@ -239,7 +241,8 @@
               </li>
             {/if}
           {:else}
-            <li on:click={() => handleCardClick(content)} on:keyup={() => handleCardClick(content)}>
+            <li on:click={() => handleCardClick(content)} 
+                on:keypress={() => handleCardClick(content)}>
               <ContentCard props={{
                 content: content,
                 mediaType: mediaType,

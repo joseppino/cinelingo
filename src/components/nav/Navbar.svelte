@@ -8,6 +8,20 @@
 
   let navBurger;
 
+  const toggleNavBurger = () => {
+    const target = navBurger.dataset.target;
+    const dataTarget = document.getElementById(target);
+    navBurger.classList.toggle("is-active");
+    dataTarget.classList.toggle('is-active');
+  }
+
+  const handleOutsideClick = () => {
+    const target = navBurger.dataset.target;
+    const dataTarget = document.getElementById(target);
+    navBurger.classList.remove("is-active");
+    dataTarget.classList.remove('is-active');
+  }
+
 </script>
 
 <nav class="navbar is-fixed-top" aria-label="main navigation">
@@ -19,30 +33,13 @@
 
     <!-- svelte-ignore a11y-missing-attribute -->
     <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" 
-    data-target="navbarMenu" tabindex="0"
-    use:clickOutside
-    bind:this={navBurger} 
-    on:click={() => {
-        const target = navBurger.dataset.target;
-        const $target = document.getElementById(target);
-        navBurger.classList.toggle("is-active");
-        $target.classList.toggle('is-active');
-      }
-    }
-    on:keyup={() => {
-        const target = navBurger.dataset.target;
-        const $target = document.getElementById(target);
-        navBurger.classList.toggle("is-active");
-        $target.classList.toggle('is-active');
-      }
-    }
-    on:click_outside={() => {
-        const target = navBurger.dataset.target;
-        const $target = document.getElementById(target);
-        navBurger.classList.remove("is-active");
-        $target.classList.remove('is-active');
-      }
-    }>
+      data-target="navbarMenu" tabindex="0"
+      use:clickOutside
+      bind:this={navBurger} 
+      on:click={() => toggleNavBurger()}
+      on:keypress={() => toggleNavBurger()}
+      on:click_outside={() => handleOutsideClick()}
+    >
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
@@ -65,9 +62,6 @@
         <a href="/explore/video/tv" use:link class="navbar-item">
           Television
         </a>
-        <!-- <a href="/explore/music" use:link class="navbar-item">
-          Music
-        </a> -->
       </div>
     </div>
     </div>
@@ -78,6 +72,7 @@
         <a href="/preferences/language-select" class="navbar-item" use:link>Select a language</a>
         {/if}
         <div class="navbar-item has-dropdown is-hoverable">
+          <!-- If logged in, display the username; else, display "Account" -->
           {#if $authStore.isLoggedIn && $authStore.username}
             <a href="#" class="navbar-link has-icons-left">
               {$authStore.username}

@@ -11,10 +11,14 @@
 
 </script>
 
-<div class="card" in:fly="{{ y: 200, duration: 2000 }}">
+<div class="card" in:fly="{{ y: 200, duration: 2000 }}" role="button" tabindex="0">
   <div class="card-image">
     <figure class="image">
-      <img src={`https://image.tmdb.org/t/p/w400/${content.poster_path}`} alt="Poster">
+      {#if mediaType === "films"}
+        <img src={`https://image.tmdb.org/t/p/w400/${content.poster_path}`} alt={`Poster for the film, ${content.title}`}>
+      {:else}
+        <img src={`https://image.tmdb.org/t/p/w400/${content.poster_path}`} alt={`Poster for the TV show, ${content.name}`}>
+      {/if}
     </figure>
   </div>
   <div class="card-content">

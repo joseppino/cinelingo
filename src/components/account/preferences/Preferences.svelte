@@ -46,7 +46,6 @@
         <li id="language-select" class="is-active"><a>Language</a></li>
         <li id="films"><a>Films</a></li>
         <li id="tv"><a>TV</a></li>
-        <li id="music"><a>Music</a></li>
       </ul>
     </div>
   </div>
