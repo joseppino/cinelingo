@@ -250,6 +250,8 @@
               }} />
             </li>
           {/if}
+        {:else}
+          <p>No content found!</p>
         {/each}
       </ul>
     </div>
