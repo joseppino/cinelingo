@@ -1,3 +1,0 @@
-# Cinelingo 🎥
-
-My FYP
