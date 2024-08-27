@@ -1,6 +1,6 @@
 # Cinelingo 🎥
 
-A web application aimed at providing another angle to language education by providing media suggestions to a learner of native content in their target language.
+A web application aimed at providing another angle to language education by providing native content suggestions to a student in their target language.
 
 This was created as a BSc Computer Science final-year project.
 
